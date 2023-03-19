@@ -1,0 +1,27 @@
+site:
+  title: Implicated
+  url: https://docs.implicated.com
+  start_page: open-feign::index.adoc
+content:
+  sources:
+    - url: ../feign-docs
+      start_paths:
+        - docs
+      branches: 'master'
+ui:
+  bundle:
+    url: https://raw.githubusercontent.com/implicated/asciidoc-publish-template/ui/ui-bundle.zip?raw=true
+    snapshot: false
+  supplemental_files:
+    - path: ui.yml
+      contents: |
+        static_files:
+        - .nojekyll
+    - path: .nojekyll
+asciidoc:
+  attributes:
+    plantuml-server-url: http://www.plantuml.com/plantuml
+  extensions:
+    - asciidoctor-plantuml
+output:
+  clean: true

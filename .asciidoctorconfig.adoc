@@ -2,4 +2,5 @@
 :sectlinks:
 :sectanchors:
 :sectnums:
+:sectnumlevels: 2
 :linkcss:
