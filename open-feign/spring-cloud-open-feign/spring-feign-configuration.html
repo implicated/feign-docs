@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Feign 配置项 :: Implicated</title>
+    <link rel="canonical" href="https://docs.implicated.com/open-feign/spring-cloud-open-feign/spring-feign-configuration.html">
+    <meta name="generator" content="Antora 3.1.2">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://docs.implicated.com">Implicated</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+<!--    <div id="topbar-nav" class="navbar-menu">-->
+<!--      <div class="navbar-end">-->
+<!--        <a class="navbar-item" href="#">Home</a>-->
+<!--        <div class="navbar-item has-dropdown is-hoverable">-->
+<!--          <a class="navbar-link" href="#">Products</a>-->
+<!--          <div class="navbar-dropdown">-->
+<!--            <a class="navbar-item" href="#">Product A</a>-->
+<!--            <a class="navbar-item" href="#">Product B</a>-->
+<!--            <a class="navbar-item" href="#">Product C</a>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="navbar-item has-dropdown is-hoverable">-->
+<!--          <a class="navbar-link" href="#">Services</a>-->
+<!--          <div class="navbar-dropdown">-->
+<!--            <a class="navbar-item" href="#">Service A</a>-->
+<!--            <a class="navbar-item" href="#">Service B</a>-->
+<!--            <a class="navbar-item" href="#">Service C</a>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="navbar-item">-->
+<!--          <span class="control">-->
+<!--            <a class="button is-primary" href="#">Download</a>-->
+<!--          </span>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="open-feign" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Learn OpenFeign</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../introduction.html">基本介绍</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Feign</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../feign/feign-component.html">Feign 的组成</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../feign/feign-core.html">Feign 的核心流程</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../feign/feign-optimize.html">Feign 的性能优化</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../feign/feign-future.html">Feign 的未来</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Spring Cloud Open Feign</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="spring-feign-integrations.html">Spring 整合 Feign 原理</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="spring-mvc-support.html">SpringMVC 注解支持原理</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../ref.html">参考文档</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<!--<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Learn OpenFeign</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Learn OpenFeign</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+-->
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Learn OpenFeign</a></li>
+    <li><a href="spring-feign-configuration.html">Feign 配置项</a></li>
+  </ul>
+</nav>
+<!---->
+<!--  -->
+<!--  <div class="edit-this-page"><a href="https://github.com/implicated/feign-docs/edit/master/docs/modules/ROOT/pages/spring-cloud-open-feign/spring-feign-configuration.adoc">Edit this Page</a></div>-->
+<!--  -->
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Feign 配置项</h1>
+<div class="sect1">
+<h2 id="_feignclientsconfiguration默认值"><a class="anchor" href="#_feignclientsconfiguration默认值"></a>FeignClientsConfiguration（默认值）</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">组件</th>
+<th class="tableblock halign-left valign-top">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Contract</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SpringMvcContract</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Encoder</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SpringEncoder</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Decoder</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SpringDecoder</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ErrorDecoder</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>feign.codec.ErrorDecoder.Default</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Logger</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Slf4jLogger</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Retryer</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Retryer.NEVER_RETRY</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RequestInterceptor</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>无</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_enablefeignclients"><a class="anchor" href="#_enablefeignclients"></a><code>@EnableFeignClients</code></h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">param</th>
+<th class="tableblock halign-left valign-top">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">同basePackages</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">basePackages</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">包扫描路径（字符串数组）</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">basePackageClasses</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">扫描指定的每个类所在的包下面的所有被@FeignClient修饰的类
+[#_defaultConfiguration]</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">defaultConfiguration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FeignClient</code> 的全局配置</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">clients</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用 <code>@FeignClient</code> 注释的类的列表。与 <code>basePackages</code> 互斥</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_feignclient"><a class="anchor" href="#_feignclient"></a><code>@FeignClient</code></h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">param</th>
+<th class="tableblock halign-left valign-top">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">同 <code>name</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">contextId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">替换 <code>name</code> 作为 bean 名称</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FeignClient</code> 的名称，不能为空</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">qualifier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">指定别名</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">url</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">手动指定 <code>@FeignClient</code> 调用的地址</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">decode404</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">404解码开关，默认 <code>false</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">configuration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">指定 Feign 的配置类</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">fallback</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">定义容错的处理类，</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">fallbackFactory</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">定义容错的处理工厂类</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">path</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">定义当前 <code>FeignClient</code> 的统一前缀</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">primary</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否将 <code>Feign</code> 代理 bean 标记为主Bean。默认为True。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>name</code> 和 <code>contextId</code> 不能相同。</p>
+</li>
+<li>
+<p><code>fallback</code> 指定的类必须实现@FeignClient标记的接口。</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>org.springframework.cloud.openfeign.FeignClientsRegistrar#validateFallback</code></p>
+</li>
+<li>
+<p><code>org.springframework.cloud.openfeign.FeignClientsRegistrar#validateFallbackFactory</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>在 <code>name</code> 和 <code>url</code> 属性中支持占位符。</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@FeignClient(name = "${feign.name}", url = "${feign.url}")
+public interface FooClient {
+    //..
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>同时指定 Java Bean 和配置属性，则配置属性优先。</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_feignclient_properties"><a class="anchor" href="#_feignclient_properties"></a>FeignClient Properties</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 66.6666%;">
+<col style="width: 11.1111%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">配置</th>
+<th class="tableblock halign-left valign-top">默认值（ <mark>foo</mark> 是Feign默认）</th>
+<th class="tableblock halign-left valign-top">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.client.default-config</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">default</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">全局配置key</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.client.default-to-properties</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">配置优先</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.client.config.&lt;name&gt;.loggerLevel</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><mark>NONE</mark></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">日志级别</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.client.config.&lt;name&gt;.connectTimeout</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><mark>10s</mark></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">连接超时时间</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.client.config.&lt;name&gt;.readTimeout</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><mark>60s</mark></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">请求超时时间</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.client.config.&lt;name&gt;.retryer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Retryer.NEVER_RETRY</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">重试器</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.client.config.&lt;name&gt;.decode404</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><mark>false</mark></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">404解码开关</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.client.config.&lt;name&gt;.errorDecoder</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><mark>feign.codec.ErrorDecoder.Default</mark></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">错误解码器</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.client.config.&lt;name&gt;.requestInterceptors</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.client.config.&lt;name&gt;.decoder</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SpringDecoder</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">解码器</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.client.config.&lt;name&gt;.encoder</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SpringEncoder</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">编码器</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.client.config.&lt;name&gt;.contract</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SpringMvcContract</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">请求解析器</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_feignhttpclient_properties"><a class="anchor" href="#_feignhttpclient_properties"></a>FeignHttpClient Properties</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>使用 <a href="https://hc.apache.org/httpcomponents-client-5.2.x/index.html">Apache HttpClient</a> 发送 <code>HTTP</code> 请求。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 16.6666%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">配置</th>
+<th class="tableblock halign-left valign-top">默认值</th>
+<th class="tableblock halign-left valign-top">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.httpclient.connection-timeout</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">连接超时时间</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.httpclient.connection-timer-repeat</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3000</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">回收超时连接的时间间隔</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.httpclient.disable-ssl-validation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否开启 <code>SSL</code> 校验</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.httpclient.enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否开启</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.httpclient.follow-redirects</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">是否充许重定向</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.httpclient.max-connections</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">线程池最大连接数</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.httpclient.max-connections-per-route</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">50</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">每个 <code>FeignClient</code> 最大连接数</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.httpclient.time-to-live</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">900</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">线程存活时间</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.httpclient.time-to-live-unit</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">秒</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">线程存活时间单位</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_feign_compression_properties"><a class="anchor" href="#_feign_compression_properties"></a>Feign Compression Properties</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 16.6666%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">配置</th>
+<th class="tableblock halign-left valign-top">默认值</th>
+<th class="tableblock halign-left valign-top">描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.compression.request.enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">开启请求压缩</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.compression.request.mime-types</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">[text/xml, application/xml, application/json]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">配置压缩支持的mime类型列表</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.compression.request.min-request-size</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2048</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">压缩数据大小的最小阈值</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.compression.response.enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">开启响应压缩</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">feign.compression.response.useGzipDecoder</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">启用默认的gzip解码器</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

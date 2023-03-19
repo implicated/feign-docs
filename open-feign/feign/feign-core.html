@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Feign 的核心流程 :: Implicated</title>
+    <link rel="canonical" href="https://docs.implicated.com/open-feign/feign/feign-core.html">
+    <meta name="generator" content="Antora 3.1.2">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://docs.implicated.com">Implicated</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+<!--    <div id="topbar-nav" class="navbar-menu">-->
+<!--      <div class="navbar-end">-->
+<!--        <a class="navbar-item" href="#">Home</a>-->
+<!--        <div class="navbar-item has-dropdown is-hoverable">-->
+<!--          <a class="navbar-link" href="#">Products</a>-->
+<!--          <div class="navbar-dropdown">-->
+<!--            <a class="navbar-item" href="#">Product A</a>-->
+<!--            <a class="navbar-item" href="#">Product B</a>-->
+<!--            <a class="navbar-item" href="#">Product C</a>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="navbar-item has-dropdown is-hoverable">-->
+<!--          <a class="navbar-link" href="#">Services</a>-->
+<!--          <div class="navbar-dropdown">-->
+<!--            <a class="navbar-item" href="#">Service A</a>-->
+<!--            <a class="navbar-item" href="#">Service B</a>-->
+<!--            <a class="navbar-item" href="#">Service C</a>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="navbar-item">-->
+<!--          <span class="control">-->
+<!--            <a class="button is-primary" href="#">Download</a>-->
+<!--          </span>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="open-feign" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Learn OpenFeign</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../introduction.html">基本介绍</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Feign</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="feign-component.html">Feign 的组成</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="feign-core.html">Feign 的核心流程</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="feign-optimize.html">Feign 的性能优化</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="feign-future.html">Feign 的未来</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Spring Cloud Open Feign</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../spring-cloud-open-feign/spring-feign-integrations.html">Spring 整合 Feign 原理</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../spring-cloud-open-feign/spring-mvc-support.html">SpringMVC 注解支持原理</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../ref.html">参考文档</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<!--<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Learn OpenFeign</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Learn OpenFeign</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+-->
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Learn OpenFeign</a></li>
+    <li>Feign</li>
+    <li><a href="feign-core.html">Feign 的核心流程</a></li>
+  </ul>
+</nav>
+<!---->
+<!--  -->
+<!--  <div class="edit-this-page"><a href="https://github.com/implicated/feign-docs/edit/master/docs/modules/ROOT/pages/feign/feign-core.adoc">Edit this Page</a></div>-->
+<!--  -->
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Feign 的核心流程</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>基本流程：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>使用 <code>JDK</code> 动态代理为每一个 <code>@FeignClient</code> 标记的接口生成代理类</p>
+</li>
+<li>
+<p>生成代理类时为每个非默认方法添加了一个代理方法</p>
+</li>
+<li>
+<p>最终执行代理类中的代理方法</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>核心类：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">ReflectiveFeign</th>
+<th class="tableblock halign-left valign-top">SynchronousMethodHandler</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<img src="../_images/reflective-feign.png" alt="^">
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<img src="../_images/synchronous-method-handler.png" alt="synchronous method handler">
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_feign_的入口方法"><a class="anchor" href="#_feign_的入口方法"></a>Feign 的入口方法</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>通过Feign.builder()生成Feign.Builder的构造者对象，然后设置相关的参数，再调用target方法构造出动态代理。</p>
+</div>
+<div class="listingblock">
+<div class="title">Feign.builder()</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class Feign {
+  public static Builder builder() {
+    return new Builder();
+  }
+    public static class Builder {
+      //...
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_构建_reflectfeign"><a class="anchor" href="#_构建_reflectfeign"></a>构建 <code>ReflectFeign</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>target</code> 方法内部先调用 <code>build</code> 方法新建一个 <code>ReflectFeign</code> 对象，然后调用 <code>ReflectFeign</code> 的 <code>newInstance</code> 方法创建动态代理。</p>
+</div>
+<div class="listingblock">
+<div class="title">feign.Feign</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public &lt;T&gt; T target(Target&lt;T&gt; target) {
+  // spring-cloud-openfeign 注入最终执行方法，最后注入到 Spring 容器中的是接口的代理对象。
+  return build().newInstance(target);
+}
+
+public Feign build() {
+  SynchronousMethodHandler.Factory synchronousMethodHandlerFactory =
+      new SynchronousMethodHandler.Factory(client, retryer, requestInterceptors, logger,
+          logLevel, decode404, closeAfterDecode, propagationPolicy);
+  // 解析处理器handlersByName将所有参数进行封装，只有一个 apply 方法
+  ParseHandlersByName handlersByName =
+      new ParseHandlersByName(contract, options, encoder, decoder, queryMapEncoder,
+          errorDecoder, synchronousMethodHandlerFactory);
+            return new ReflectiveFeign(
+                    handlersByName,
+                    // InvocationHandlerFactory 控制反射方法的调度
+                    invocationHandlerFactory, <i class="conum" data-value="1"></i><b>(1)</b>
+                    // QueryMapEncoder 按照 name 和 value 转换 object 到 map
+                    queryMapEncoder); <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>Builder</code> 的属性，控制反射方法的调度，默认值是 <code>InvocationHandlerFactory.Default()</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>Builder</code> 的属性，接口参数注解 <code>@QueryMap</code> 时，参数的编码器，默认值是 <code>QueryMapEncoder</code>.Default()</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_创建动态代理对象"><a class="anchor" href="#_创建动态代理对象"></a>创建动态代理对象</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>ReflectiveFeign</code> 有五个内部类：</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Inner Class</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FeignInvocationHandler</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">实现了 <code>java.lang.reflect.InvocationHandler</code>，定义 <code>JDK</code> 动态代理执行的方法</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ParseHandlersByName</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">解析处理程序</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BuildTemplateByResolvingArgs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">实现了 <code>RequestTemplate.Factory</code> ，HTTP请求生成器工厂。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BuildEncodedTemplateFromArgs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">继承 <code>BuildTemplateByResolvingArgs</code>，重载 <code>resolve</code> 方法，解析 <code>body</code> 请求。</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BuildFormEncodedTemplateFromArgs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">继承 <code>BuildTemplateByResolvingArgs</code>，重载 <code>resolve</code> 方法，解析 <code>form</code> 表单请求。</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>ReflectiveFeign.newInstance</code> 方法创建接口动态代理对象</p>
+</div>
+<div class="listingblock">
+<div class="title">feign.ReflectiveFeign</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// 构造器
+ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
+                InvocationHandlerFactory factory,
+                QueryMapEncoder queryMapEncoder) {
+    this.targetToHandlersByName = targetToHandlersByName;
+    this.factory = factory;
+    this.queryMapEncoder = queryMapEncoder;
+}
+
+// 构造器
+@Override
+public &lt;T&gt; T newInstance(Target&lt;T&gt; target) {
+    // targetToHandlersByName是构造器传入的ParseHandlersByName对象
+    // 根据target对象创建方法名和方法处理器的map映射
+    Map&lt;String, MethodHandler&gt; nameToHandler = targetToHandlersByName.apply(target); <i class="conum" data-value="1"></i><b>(1)</b>
+    // 方法处理器的map映射
+    Map&lt;Method, MethodHandler&gt; methodToHandler = new LinkedHashMap&lt;Method, MethodHandler&gt;();
+    // 默认方法处理器的map映射
+    List&lt;DefaultMethodHandler&gt; defaultMethodHandlers = new LinkedList&lt;DefaultMethodHandler&gt;();
+
+    // target.type() is @FeignClient 标识的class
+    // 遍历接口所有方法，构建Method -&gt; MethodHandler的映射
+    for (Method method : target.type().getMethods()) {
+        if (method.getDeclaringClass() == Object.class) {
+            continue;
+        } else if (Util.isDefault(method)) {
+            // 默认方法，执行原方法
+            DefaultMethodHandler handler = new DefaultMethodHandler(method);
+            defaultMethodHandlers.add(handler);
+            methodToHandler.put(method, handler);
+        } else {
+            // 一般方法，执行代理类方法
+            methodToHandler.put(method, nameToHandler.get(Feign.configKey(target.type(), method)));
+        }
+    }
+    // 设置拦截器
+    // 创建动态代理，factory 是 InvocationHandlerFactory.Default，创建出来的是
+    // feign.ReflectiveFeign.FeignInvocationHandler.dispatch 持有 methodToHandler 引用
+    // ReflectiveFeign.FeignInvocationHandler，也就是说后续对方法的调用都会进入到该对象的 invoke 方法
+    InvocationHandler handler = factory.create(target, methodToHandler);
+    // 生成 JDK 动态代理
+    T proxy = (T) Proxy.newProxyInstance(target.type().getClassLoader(),
+            new Class&lt;?&gt;[]{target.type()}, handler);
+
+    // 绑定默认方法到代理上
+    for (DefaultMethodHandler defaultMethodHandler : defaultMethodHandlers) {
+        defaultMethodHandler.bindTo(proxy);
+    }
+    // 最终注入到 Spring 容器
+    return proxy;
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>根据指定的 <code>contract</code> 解析 <code>target</code></td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_解析方法元数据"><a class="anchor" href="#_解析方法元数据"></a>解析方法元数据</h3>
+<div class="paragraph">
+<p><code>Spring-cloud</code> 继承 <code>Contract.BaseContract</code>，实现处理参数的方法</p>
+</div>
+<details>
+<summary class="title">查看 <code>BaseContract</code> 类图</summary>
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/base-contract.png" alt="base contract">
+</div>
+</div>
+</div>
+</details>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public Map&lt;String, MethodHandler&gt; apply(Target key) {
+    // 待处理的方法元数据
+    List&lt;MethodMetadata&gt; metadata = contract.parseAndValidatateMetadata(key.type());
+    Map&lt;String, MethodHandler&gt; result = new LinkedHashMap&lt;String, MethodHandler&gt;();
+    // 处理方法元数据
+    for (MethodMetadata md : metadata) {
+        BuildTemplateByResolvingArgs buildTemplate;
+        // form 表单
+        if (!md.formParams().isEmpty() &amp;&amp; md.template().bodyTemplate() == null) {
+            buildTemplate = new BuildFormEncodedTemplateFromArgs(md, encoder, queryMapEncoder);
+        }
+        // body
+        else if (md.bodyIndex() != null) {
+            buildTemplate = new BuildEncodedTemplateFromArgs(md, encoder, queryMapEncoder);
+        }
+        // 其它请求
+        else {
+            buildTemplate = new BuildTemplateByResolvingArgs(md, queryMapEncoder);
+        }
+        result.put(md.configKey(),
+                factory.create(key, md, buildTemplate, options, decoder, errorDecoder));
+    }
+    return result;
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>循环解析每个非默认方法元数据。</p>
+</div>
+<div class="listingblock">
+<div class="title">feign.Contract.BaseContract#parseAndValidatateMetadata</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
+public List&lt;MethodMetadata&gt; parseAndValidatateMetadata(Class&lt;?&gt; targetType) {
+    //...
+
+    // 解析每个方法
+    Map&lt;String, MethodMetadata&gt; result = new LinkedHashMap&lt;String, MethodMetadata&gt;();
+    for (Method method : targetType.getMethods()) {
+        // 跳过默认方法
+        if (method.getDeclaringClass() == Object.class ||
+                (method.getModifiers() &amp; Modifier.STATIC) != 0 ||
+                Util.isDefault(method)) {
+            continue;
+        }
+        // 解析方法元数据，进入 SpringMvcContract
+        MethodMetadata metadata = parseAndValidateMetadata(targetType, method);
+        checkState(!result.containsKey(metadata.configKey()), "Overrides unsupported: %s",
+                metadata.configKey());
+        result.put(metadata.configKey(), metadata);
+    }
+    return new ArrayList&lt;&gt;(result.values());
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>解析每个具体方法。</p>
+</div>
+<div class="listingblock">
+<div class="title">feign.Contract.BaseContract#parseAndValidateMetadata</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">protected MethodMetadata parseAndValidateMetadata(Class&lt;?&gt; targetType, Method method) {
+    MethodMetadata data = new MethodMetadata();
+    data.returnType(Types.resolve(targetType, targetType, method.getGenericReturnType()));
+    // 方法唯一key
+    data.configKey(Feign.configKey(targetType, method));
+
+    // 解析class上注解
+    if (targetType.getInterfaces().length == 1) {
+        processAnnotationOnClass(data, targetType.getInterfaces()[0]);
+    }
+    processAnnotationOnClass(data, targetType);
+
+
+    // 解析method上注解
+    for (Annotation methodAnnotation : method.getAnnotations()) {
+        processAnnotationOnMethod(data, methodAnnotation, method);
+    }
+    Class&lt;?&gt;[] parameterTypes = method.getParameterTypes();
+    Type[] genericParameterTypes = method.getGenericParameterTypes();
+
+    // 解析参数
+    Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+    int count = parameterAnnotations.length;
+    for (int i = 0; i &lt; count; i++) {
+        boolean isHttpAnnotation = false;
+        if (parameterAnnotations[i] != null) {
+            isHttpAnnotation = processAnnotationsOnParameter(data, parameterAnnotations[i], i);
+        }
+        if (parameterTypes[i] == URI.class) {
+            data.urlIndex(i);
+        } else if (!isHttpAnnotation &amp;&amp; parameterTypes[i] != Request.Options.class) {
+            data.bodyIndex(i);
+            data.bodyType(Types.resolve(targetType, targetType, genericParameterTypes[i]));
+        }
+    }
+    return data;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_发起请求"><a class="anchor" href="#_发起请求"></a>发起请求</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_不同方法的路由"><a class="anchor" href="#_不同方法的路由"></a>不同方法的路由</h3>
+<div class="paragraph">
+<p><code>MethodHandler</code> 有两个实现，<code>DefaultMethodHandler</code> 和 <code>SynchronousMethodHandler</code>。 默认方法走 <code>DefaultMethodHandler</code> ，其它方法走 <code>SynchronousMethodHandler</code>。</p>
+</div>
+<div class="listingblock">
+<div class="title">feign.ReflectiveFeign.FeignInvocationHandler#invoke</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
+public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    // 自定义equals、hashCode和toString方法的处理
+    if ("equals".equals(method.getName())) {
+        try {
+            Object otherHandler =
+                    args.length &gt; 0 &amp;&amp; args[0] != null ? Proxy.getInvocationHandler(args[0]) : null;
+            return equals(otherHandler);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    } else if ("hashCode".equals(method.getName())) {
+        return hashCode();
+    } else if ("toString".equals(method.getName())) {
+        return toString();
+    }
+
+    // dispatch 就是 newInstance 方法中的 methodToHandler
+    return dispatch.get(method).invoke(args);
+}</code></pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_defaultmethodhandler"><a class="anchor" href="#_defaultmethodhandler"></a><code>DefaultMethodHandler</code></h4>
+<div class="paragraph">
+<p>执行代理接口自己的方法。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
+public Object invoke(Object[] argv) throws Throwable {
+    if (handle == null) {
+        throw new IllegalStateException(
+                "Default method handler invoked before proxy has been bound.");
+    }
+    return handle.invokeWithArguments(argv);
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_synchronousmethodhandler"><a class="anchor" href="#_synchronousmethodhandler"></a><code>SynchronousMethodHandler</code></h4>
+<div class="paragraph">
+<p>定义了发起 HTTP 请求的方法</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
+public Object invoke(Object[] argv) throws Throwable {
+    // RequestTemplate 定义了完整的HTTP请求信息
+    RequestTemplate template = buildTemplateFromArgs.create(argv);
+    // Options 定义了连接超时时间、请求超时时间、是否允许重定向
+    Options options = findOptions(argv);
+    // 重试设置
+    Retryer retryer = this.retryer.clone();
+    // 成功返回，失败抛异常
+    while (true) {
+        try {
+            // 执行和解码
+            return executeAndDecode(template, options);
+        } catch (RetryableException e) {
+            try {
+                // 判断是否继续重试
+                retryer.continueOrPropagate(e);
+            } catch (RetryableException th) {
+                Throwable cause = th.getCause();
+                if (propagationPolicy == UNWRAP &amp;&amp; cause != null) {
+                    throw cause;
+                } else {
+                    throw th;
+                }
+            }
+            if (logLevel != Logger.Level.NONE) {
+                logger.logRetry(metadata.configKey(), logLevel);
+            }
+            // 重试
+            continue;
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_发起请求和解析响应"><a class="anchor" href="#_发起请求和解析响应"></a>发起请求和解析响应</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Object executeAndDecode(RequestTemplate template, Options options) throws Throwable {
+    // RequestTemplate 转换为 Request
+    Request request = targetRequest(template);
+
+    // 打印请求参数
+    if (logLevel != Logger.Level.NONE) {
+        logger.logRequest(metadata.configKey(), logLevel, request);
+    }
+
+    // 打印接口响应时间
+    Response response;
+    long start = System.nanoTime();
+    try {
+        // 发起请求
+        response = client.execute(request, options);
+    } catch (IOException e) {
+        if (logLevel != Logger.Level.NONE) {
+            logger.logIOException(metadata.configKey(), logLevel, e, elapsedTime(start));
+        }
+        // 抛出重试异常 RetryableException()
+        throw errorExecuting(request, e);
+    }
+    long elapsedTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+
+    boolean shouldClose = true;
+    try {
+        if (logLevel != Logger.Level.NONE) {
+            response =
+                    logger.logAndRebufferResponse(metadata.configKey(), logLevel, response, elapsedTime);
+        }
+        if (Response.class == metadata.returnType()) {
+            if (response.body() == null) {
+                return response;
+            }
+            if (response.body().length() == null ||
+                    response.body().length() &gt; MAX_RESPONSE_BUFFER_SIZE) {
+                shouldClose = false;
+                return response;
+            }
+            // Ensure the response body is disconnected
+            // 读取body字节数组，返回response
+            byte[] bodyData = Util.toByteArray(response.body().asInputStream());
+            return response.toBuilder().body(bodyData).build();
+        }
+        // 处理 2XX
+        if (response.status() &gt;= 200 &amp;&amp; response.status() &lt; 300) {
+            // 接口返回void
+            if (void.class == metadata.returnType()) {
+                return null;
+            }
+            // 解码response，直接调用decoder解码
+            else {
+                Object result = decode(response);
+                shouldClose = closeAfterDecode;
+                return result;
+            }
+        }
+        // 处理 404
+        else if (decode404 &amp;&amp; response.status() == 404 &amp;&amp; void.class != metadata.returnType()) {
+            Object result = decode(response);
+            shouldClose = closeAfterDecode;
+            return result;
+        }
+        // 其他返回码，使用errorDecoder解析，抛出异常
+        else {
+            throw errorDecoder.decode(metadata.configKey(), response);
+        }
+    } catch (IOException e) {
+        if (logLevel != Logger.Level.NONE) {
+            logger.logIOException(metadata.configKey(), logLevel, e, elapsedTime);
+        }
+        throw errorReading(request, response, e);
+    } finally {
+        if (shouldClose) {
+            // 关流
+            ensureClosed(response.body());
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_发送http请求"><a class="anchor" href="#_发送http请求"></a>发送HTTP请求</h3>
+<div class="paragraph">
+<p><code>client</code> 是一个 <code>Client</code> 接口，默认实现类是`Client.Default`，使用 <code>java.net.HttpURLConnection</code> 发送 <code>HTTP</code> 请求。</p>
+</div>
+<div class="paragraph">
+<p>feign还实现了：</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>ApacheHttpClient</p>
+</li>
+<li>
+<p>OkHttpClient</p>
+</li>
+<li>
+<p>RibbonClient</p>
+</li>
+<li>
+<p>Java 11 Http2</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
+public Response execute(Request request, Options options) throws IOException {
+    HttpURLConnection connection = convertAndSend(request, options); <i class="conum" data-value="1"></i><b>(1)</b>
+    return convertResponse(connection, request); <i class="conum" data-value="2"></i><b>(2)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>发送请求</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>解析响应</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_发送请求"><a class="anchor" href="#_发送请求"></a>发送请求</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">HttpURLConnection convertAndSend(Request request, Options options) throws IOException {
+    final URL url = new URL(request.url());
+    // 获取 conniption
+    final HttpURLConnection connection = this.getConnection(url);
+    //...
+
+    connection.setConnectTimeout(options.connectTimeoutMillis());
+    connection.setReadTimeout(options.readTimeoutMillis());
+    connection.setAllowUserInteraction(false);
+    connection.setInstanceFollowRedirects(options.isFollowRedirects());
+    connection.setRequestMethod(request.httpMethod().name());
+
+    //..
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_解析响应"><a class="anchor" href="#_解析响应"></a>解析响应</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Response convertResponse(HttpURLConnection connection, Request request) throws IOException {
+    int status = connection.getResponseCode();
+    String reason = connection.getResponseMessage();
+
+    if (status &lt; 0) {
+        throw new IOException(format("Invalid status(%s) executing %s %s", status,
+                connection.getRequestMethod(), connection.getURL()));
+    }
+
+    Map&lt;String, Collection&lt;String&gt;&gt; headers = new LinkedHashMap&lt;&gt;();
+    for (Map.Entry&lt;String, List&lt;String&gt;&gt; field : connection.getHeaderFields().entrySet()) {
+        // response message
+        if (field.getKey() != null) {
+            headers.put(field.getKey(), field.getValue());
+        }
+    }
+
+    Integer length = connection.getContentLength();
+    if (length == -1) {
+        length = null;
+    }
+    InputStream stream;
+    if (status &gt;= 400) {
+        stream = connection.getErrorStream();
+    } else {
+        stream = connection.getInputStream();
+    }
+    return Response.builder()
+            .status(status)
+            .reason(reason)
+            .headers(headers)
+            .request(request)
+            .body(stream, length)
+            .build();
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_总结"><a class="anchor" href="#_总结"></a>总结</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_流程图"><a class="anchor" href="#_流程图"></a>流程图</h3>
+<div class="imageblock plantuml">
+<div class="content">
+<img src="http://www.plantuml.com/plantuml/png/SoWkIImgAStDuTBNLyZCIyufJKcriagjICmjo4bLAIueoinBrqtEoIzDqSqlICtJJKlDJC_JAm1gY8xbSaZDIm6o0000" alt="diagram">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_时序图"><a class="anchor" href="#_时序图"></a>时序图</h3>
+<div class="imageblock plantuml">
+<div class="content">
+<img src="http://www.plantuml.com/plantuml/png/SoWkIImgAStDuTBNLyZCIyufJKcriagjICmjo4bLIKlDJC_JAm1AHyToEQJcfG1P0000" alt="diagram">
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

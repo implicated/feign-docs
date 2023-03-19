@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Feign 的性能优化 :: Implicated</title>
+    <link rel="canonical" href="https://docs.implicated.com/open-feign/feign/feign-optimize.html">
+    <meta name="generator" content="Antora 3.1.2">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://docs.implicated.com">Implicated</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+<!--    <div id="topbar-nav" class="navbar-menu">-->
+<!--      <div class="navbar-end">-->
+<!--        <a class="navbar-item" href="#">Home</a>-->
+<!--        <div class="navbar-item has-dropdown is-hoverable">-->
+<!--          <a class="navbar-link" href="#">Products</a>-->
+<!--          <div class="navbar-dropdown">-->
+<!--            <a class="navbar-item" href="#">Product A</a>-->
+<!--            <a class="navbar-item" href="#">Product B</a>-->
+<!--            <a class="navbar-item" href="#">Product C</a>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="navbar-item has-dropdown is-hoverable">-->
+<!--          <a class="navbar-link" href="#">Services</a>-->
+<!--          <div class="navbar-dropdown">-->
+<!--            <a class="navbar-item" href="#">Service A</a>-->
+<!--            <a class="navbar-item" href="#">Service B</a>-->
+<!--            <a class="navbar-item" href="#">Service C</a>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="navbar-item">-->
+<!--          <span class="control">-->
+<!--            <a class="button is-primary" href="#">Download</a>-->
+<!--          </span>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="open-feign" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Learn OpenFeign</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../introduction.html">基本介绍</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Feign</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="feign-component.html">Feign 的组成</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="feign-core.html">Feign 的核心流程</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="feign-optimize.html">Feign 的性能优化</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="feign-future.html">Feign 的未来</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Spring Cloud Open Feign</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../spring-cloud-open-feign/spring-feign-integrations.html">Spring 整合 Feign 原理</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../spring-cloud-open-feign/spring-mvc-support.html">SpringMVC 注解支持原理</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../ref.html">参考文档</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<!--<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Learn OpenFeign</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Learn OpenFeign</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+-->
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Learn OpenFeign</a></li>
+    <li>Feign</li>
+    <li><a href="feign-optimize.html">Feign 的性能优化</a></li>
+  </ul>
+</nav>
+<!---->
+<!--  -->
+<!--  <div class="edit-this-page"><a href="https://github.com/implicated/feign-docs/edit/master/docs/modules/ROOT/pages/feign/feign-optimize.adoc">Edit this Page</a></div>-->
+<!--  -->
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Feign 的性能优化</h1>
+<div class="sect1">
+<h2 id="_设置日志级别"><a class="anchor" href="#_设置日志级别"></a>设置日志级别</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">级别</th>
+<th class="tableblock halign-left valign-top">打印内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NONE （默认值）</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">不记录任何日志</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BASIC</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">仅记录请求方法、URL、响应状态代码以及执行时间</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HEADERS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">记录BASIC级别的基础上，记录请求和响应的header</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FULL</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">记录请求和响应的header、body和元数据</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Feign 日志记录仅响应 <code><strong>DEBUG</strong></code> 级别，需要同时设置 Feign 和 Feign 所在包的日志级别为 <code><strong>DEBUG</strong></code></p>
+</div>
+<div class="listingblock">
+<div class="title">feign.SynchronousMethodHandler#executeAndDecode</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">if (logLevel != Logger.Level.NONE) {
+    logger.logRequest(metadata.configKey(), logLevel, request);
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">feign.slf4j.Slf4jLogger#logRequest</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
+protected void logRequest(String configKey, Level logLevel, Request request) {
+    if (logger.isDebugEnabled()) {
+      super.logRequest(configKey, logLevel, request);
+    }
+}</code></pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_设置请求响应压缩"><a class="anchor" href="#_设置请求响应压缩"></a>设置请求/响应压缩</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_概述"><a class="anchor" href="#_概述"></a>概述</h3>
+<div class="paragraph">
+<p><code>gzip</code> 是一种数据格式，采用 <code>deflate</code> 算法压缩数据`，gzip` 是一种流行的文件压缩算法，应用十分广泛，尤其是在 Linux 平台。</p>
+</div>
+<div class="paragraph">
+<p>当 <code>Gzip</code> 压缩一个纯文本文件时，效果是非常明显的，大约可以减少 70％ 以上的文件大小。</p>
+</div>
+<div class="paragraph">
+<p>网络数据经过压缩后实际上降低了网络传输的字节数，最明显的好处就是可以加快网页加载的速度。网页加载速度加快的好处不言而喻，除了节省流量，改善用户的浏览体验外，另一个潜在的好处是 <code>Gzip</code> 与搜索引擎的抓取工具有着更好的关系。</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_http协议中关于压缩传输的规定"><a class="anchor" href="#_http协议中关于压缩传输的规定"></a>HTTP协议中关于压缩传输的规定</h3>
+<div class="paragraph">
+<p>客户端向服务器请求中带有：<code>Accept-Encoding:gzip，deflate</code> 字段，向服务器表示客户端支持的压缩格式（<code>gzip</code> 或者 <code>deflate</code>），如果不发送该消息头，服务端默认是不会压缩的。</p>
+</div>
+<div class="paragraph">
+<p>服务端在收到请求之后，如果发现请求头中含有 <code>Accept-Encoding</code> 字段，并且支持该类型压缩，就会对响应报文压缩之后返回给客户端，并且携带 <code>Content-Encoding:gzip</code> 消息头，表示响应报文是根据该格式进行压缩的。</p>
+</div>
+<div class="paragraph">
+<p>客户端接收到请求之后，先判断是否有 <code>Content-Encoding</code> 消息头，如果有，按该格式解压报文。否则按正常报文处理。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">feign:
+  compression:
+    request:
+      enabled: true
+      mime-types: text/xml,application/xml,application/json
+      min-request-size: 2048
+    response:
+      enabled: true</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_替换默认的http实现"><a class="anchor" href="#_替换默认的http实现"></a>替换默认的HTTP实现</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_apache_httpclient"><a class="anchor" href="#_apache_httpclient"></a><a href="https://hc.apache.org/httpcomponents-client-5.2.x/index.html">Apache HttpClient</a></h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.github.openfeign&lt;/groupId&gt;
+    &lt;artifactId&gt;feign-httpclient&lt;/artifactId&gt;
+    &lt;version&gt;${openfeign.version}&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">feign:
+  httpclient:
+    max-connections: 200
+    max-connections-per-route: 50</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_okhttp"><a class="anchor" href="#_okhttp"></a><a href="https://square.github.io/okhttp/">OkHttp</a></h3>
+<div class="paragraph">
+<p><a href="https://segmentfault.com/a/1190000038840773">性能最好</a>。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.github.openfeign&lt;/groupId&gt;
+    &lt;artifactId&gt;feign-okhttp&lt;/artifactId&gt;
+    &lt;version&gt;${openfeign.version}&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">feign:
+  httpclient:
+    max-connections: 200
+    max-connections-per-route: 50
+  okhttp:
+    enable: true</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

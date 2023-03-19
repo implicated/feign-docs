@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Feign 的组成 :: Implicated</title>
+    <link rel="canonical" href="https://docs.implicated.com/open-feign/feign/feign-component.html">
+    <meta name="generator" content="Antora 3.1.2">
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <script>var uiRootPath = '../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://docs.implicated.com">Implicated</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+<!--    <div id="topbar-nav" class="navbar-menu">-->
+<!--      <div class="navbar-end">-->
+<!--        <a class="navbar-item" href="#">Home</a>-->
+<!--        <div class="navbar-item has-dropdown is-hoverable">-->
+<!--          <a class="navbar-link" href="#">Products</a>-->
+<!--          <div class="navbar-dropdown">-->
+<!--            <a class="navbar-item" href="#">Product A</a>-->
+<!--            <a class="navbar-item" href="#">Product B</a>-->
+<!--            <a class="navbar-item" href="#">Product C</a>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="navbar-item has-dropdown is-hoverable">-->
+<!--          <a class="navbar-link" href="#">Services</a>-->
+<!--          <div class="navbar-dropdown">-->
+<!--            <a class="navbar-item" href="#">Service A</a>-->
+<!--            <a class="navbar-item" href="#">Service B</a>-->
+<!--            <a class="navbar-item" href="#">Service C</a>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="navbar-item">-->
+<!--          <span class="control">-->
+<!--            <a class="button is-primary" href="#">Download</a>-->
+<!--          </span>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="open-feign" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Learn OpenFeign</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../introduction.html">基本介绍</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Feign</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="feign-component.html">Feign 的组成</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="feign-core.html">Feign 的核心流程</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="feign-optimize.html">Feign 的性能优化</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="feign-future.html">Feign 的未来</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Spring Cloud Open Feign</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../spring-cloud-open-feign/spring-feign-integrations.html">Spring 整合 Feign 原理</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../spring-cloud-open-feign/spring-mvc-support.html">SpringMVC 注解支持原理</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../ref.html">参考文档</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<!--<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Learn OpenFeign</span>
+    <span class="version">default</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Learn OpenFeign</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">default</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+-->
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Learn OpenFeign</a></li>
+    <li>Feign</li>
+    <li><a href="feign-component.html">Feign 的组成</a></li>
+  </ul>
+</nav>
+<!---->
+<!--  -->
+<!--  <div class="edit-this-page"><a href="https://github.com/implicated/feign-docs/edit/master/docs/modules/ROOT/pages/feign/feign-component.adoc">Edit this Page</a></div>-->
+<!--  -->
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Feign 的组成</h1>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">接口</th>
+<th class="tableblock halign-left valign-top">作用</th>
+<th class="tableblock halign-left valign-top">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Feign.Builder</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Feign的入口</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Client</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Feign底层用什么去请求</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Feign.Client.Default (和Ribbon配合时LoadBalancerFeignClient)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Contract</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">注解支持</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>feign.Contract.Default</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Encoder</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">编码器,用于将对象转换成HTTP请求消息体</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>feign.codec.Encoder.Default</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Decoder</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">解码器,将响应消息体转换成对象</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>feign.codec.Decoder.Default</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ErrorDecoder</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">错误解码器，处理 <code>2XX</code>、<code>404</code> 之外的响应信息</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>feign.codec.ErrorDecoder.Default</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Logger</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">日志管理器</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>feign.Logger.NoOpLogger</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Retryer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">重试器，默认重试 5 次（以1.5的整数指数幂倍厘秒为间隔）</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>feign.Retryer.Default#Default</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RequestInterceptor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">请求拦截器，用于为每个请求添加通用逻辑</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>无</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hystrix</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">服务熔断组件</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ribbon</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">负载均衡组件</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+</tr>
+</tbody>
+</table>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
