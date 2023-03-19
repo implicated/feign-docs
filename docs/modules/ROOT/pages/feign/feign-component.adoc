@@ -1,0 +1,50 @@
+= Feign 的组成
+
+[cols="1,2,2a"]
+|===
+| 接口 | 作用 | 默认值
+
+| Feign.Builder
+| Feign的入口
+|
+
+| Client
+| Feign底层用什么去请求
+| Feign.Client.Default (和Ribbon配合时LoadBalancerFeignClient)
+
+| Contract
+| 注解支持
+| feign.Contract.Default
+
+| Encoder
+| 编码器,用于将对象转换成HTTP请求消息体
+| feign.codec.Encoder.Default
+
+| Decoder
+| 解码器,将响应消息体转换成对象
+| feign.codec.Decoder.Default
+
+| ErrorDecoder
+| 错误解码器，处理 `2XX`、`404` 之外的响应信息
+| feign.codec.ErrorDecoder.Default
+
+| Logger
+| 日志管理器
+| feign.Logger.NoOpLogger
+
+| Retryer
+| 重试器，默认重试 5 次（以1.5的整数指数幂倍厘秒为间隔）
+| feign.Retryer.Default#Default
+
+| RequestInterceptor
+| 请求拦截器，用于为每个请求添加通用逻辑
+| 无
+
+| hystrix
+| 服务熔断组件
+|
+
+| ribbon
+| 负载均衡组件
+|
+|===

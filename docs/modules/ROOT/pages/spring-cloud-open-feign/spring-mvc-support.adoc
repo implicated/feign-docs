@@ -1,0 +1,64 @@
+= SpringMVC 注解支持原理
+
+继承 `Contract.BaseContract`，实现处理参数的方法
+
+[source,java,indent=0]
+----
+public class SpringMvcContract extends Contract.BaseContract implements ResourceLoaderAware {
+
+    public SpringMvcContract(List<AnnotatedParameterProcessor> annotatedParameterProcessors, ConversionService conversionService) {
+        Assert.notNull(annotatedParameterProcessors,
+                "Parameter processors can not be null.");
+        Assert.notNull(conversionService, "ConversionService can not be null.");
+
+        List<AnnotatedParameterProcessor> processors;
+        if (!annotatedParameterProcessors.isEmpty()) {
+            processors = new ArrayList<>(annotatedParameterProcessors);
+        }
+        else {
+            processors = getDefaultAnnotatedArgumentsProcessors();
+        }
+        this.annotatedArgumentProcessors = toAnnotatedArgumentProcessorMap(processors);
+        this.conversionService = conversionService;
+        this.convertingExpanderFactory = new ConvertingExpanderFactory(conversionService);
+    }
+
+    private List<AnnotatedParameterProcessor> getDefaultAnnotatedArgumentsProcessors() {
+        List<AnnotatedParameterProcessor> annotatedArgumentResolvers = new ArrayList<>();
+
+        // 具体实现
+        annotatedArgumentResolvers.add(new PathVariableParameterProcessor());
+        annotatedArgumentResolvers.add(new RequestParamParameterProcessor());
+        annotatedArgumentResolvers.add(new RequestHeaderParameterProcessor());
+        annotatedArgumentResolvers.add(new QueryMapParameterProcessor());
+
+        return annotatedArgumentResolvers;
+    }
+
+    // 解析方法元数据，方法中会调用下面三个方法
+    @Override
+    public MethodMetadata parseAndValidateMetadata(Class<?> targetType, Method method) {
+        //...
+    }
+
+    // 解析class上注解
+    @Override
+    protected void processAnnotationOnClass(MethodMetadata data, Class<?> clz) {
+        //...
+    }
+
+    // 解析method上注解
+    @Override
+    protected void processAnnotationOnMethod(MethodMetadata data, Annotation methodAnnotation, Method method) {
+        //...
+    }
+
+    // 解析参数
+    @Override
+    protected boolean processAnnotationsOnParameter(MethodMetadata data, Annotation[] annotations, int paramIndex) {
+        //...
+    }
+
+    //...
+}
+----

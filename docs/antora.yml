@@ -1,5 +1,5 @@
-name: asciidoc
-title: Write and Publish
+name: open-feign
+title: Learn OpenFeign
 version: ~
 nav:
 - modules/ROOT/nav.adoc

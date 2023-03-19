@@ -1,0 +1,148 @@
+= Feign 配置项
+
+== FeignClientsConfiguration（默认值）
+
+[cols="1,2a"]
+|===
+| 组件 | 默认值
+
+| Contract
+| SpringMvcContract
+
+| Encoder
+| SpringEncoder
+
+| Decoder
+| SpringDecoder
+
+| ErrorDecoder
+| feign.codec.ErrorDecoder.Default
+
+| Logger
+| Slf4jLogger
+
+| Retryer
+| Retryer.NEVER_RETRY
+
+| RequestInterceptor
+| 无
+|===
+
+== `@EnableFeignClients`
+
+[col="1,2a"]
+|===
+| param | 作用
+
+|value
+|同basePackages
+|basePackages
+|包扫描路径（字符串数组）
+|basePackageClasses
+|扫描指定的每个类所在的包下面的所有被@FeignClient修饰的类
+[#_defaultConfiguration]
+|defaultConfiguration
+|`FeignClient` 的全局配置
+|clients
+| 用 `@FeignClient` 注释的类的列表。与 `basePackages` 互斥
+|===
+
+== `@FeignClient`
+
+[col="1,2a"]
+|===
+| param | 作用
+
+|value
+|同 `name`
+|contextId
+|替换 `name` 作为 bean 名称
+|name
+|`FeignClient` 的名称，不能为空
+|qualifier
+|指定别名
+|url
+|手动指定 `@FeignClient` 调用的地址
+|decode404
+|404解码开关，默认 `false`
+|configuration
+|指定 Feign 的配置类
+|fallback
+|定义容错的处理类，
+|fallbackFactory
+|定义容错的处理工厂类
+|path
+|定义当前 `FeignClient` 的统一前缀
+|primary
+|是否将 `Feign` 代理 bean 标记为主Bean。默认为True。
+|===
+
+[NOTE,option=hello]
+====
+* `name` 和 `contextId` 不能相同。
+* `fallback` 指定的类必须实现@FeignClient标记的接口。
+** `org.springframework.cloud.openfeign.FeignClientsRegistrar#validateFallback`
+** `org.springframework.cloud.openfeign.FeignClientsRegistrar#validateFallbackFactory`
+* 在 `name` 和 `url` 属性中支持占位符。
++
+[source,java,indent=0]
+----
+@FeignClient(name = "${feign.name}", url = "${feign.url}")
+public interface FooClient {
+    //..
+}
+----
+* 同时指定 Java Bean 和配置属性，则配置属性优先。
+====
+
+== FeignClient Properties
+
+[cols="6,1,2"]
+|===
+|配置 | 默认值（ #foo# 是Feign默认） | 描述
+
+| feign.client.default-config | default | 全局配置key
+| feign.client.default-to-properties | true | 配置优先
+| feign.client.config.<name>.loggerLevel | #NONE# | 日志级别
+| feign.client.config.<name>.connectTimeout | #10s# | 连接超时时间
+| feign.client.config.<name>.readTimeout | #60s# | 请求超时时间
+| feign.client.config.<name>.retryer | Retryer.NEVER_RETRY | 重试器
+| feign.client.config.<name>.decode404 | #false# | 404解码开关
+| feign.client.config.<name>.errorDecoder | #feign.codec.ErrorDecoder.Default# | 错误解码器
+| feign.client.config.<name>.requestInterceptors | |
+| feign.client.config.<name>.decoder | SpringDecoder | 解码器
+| feign.client.config.<name>.encoder | SpringEncoder | 编码器
+| feign.client.config.<name>.contract | SpringMvcContract | 请求解析器
+|===
+
+== FeignHttpClient Properties
+
+使用 https://hc.apache.org/httpcomponents-client-5.2.x/index.html[Apache HttpClient] 发送 `HTTP` 请求。
+
+[cols="3,1,2"]
+|===
+|配置 | 默认值 | 描述
+
+|feign.httpclient.connection-timeout | 2000 | 连接超时时间
+|feign.httpclient.connection-timer-repeat | 3000 | 回收超时连接的时间间隔
+|feign.httpclient.disable-ssl-validation | false | 是否开启 `SSL` 校验
+|feign.httpclient.enabled | true | 是否开启
+|feign.httpclient.follow-redirects | true | 是否充许重定向
+|feign.httpclient.max-connections | 200 | 线程池最大连接数
+|feign.httpclient.max-connections-per-route | 50 | 每个 `FeignClient` 最大连接数
+|feign.httpclient.time-to-live | 900 | 线程存活时间
+|feign.httpclient.time-to-live-unit | 秒 | 线程存活时间单位
+|===
+
+== Feign Compression Properties
+
+[cols="3,1,2"]
+|===
+|配置 | 默认值 | 描述
+
+|feign.compression.request.enabled | false | 开启请求压缩
+|feign.compression.request.mime-types | [text/xml, application/xml, application/json] | 配置压缩支持的mime类型列表
+|feign.compression.request.min-request-size | 2048 | 压缩数据大小的最小阈值
+|feign.compression.response.enabled | false | 开启响应压缩
+|feign.compression.response.useGzipDecoder | false | 启用默认的gzip解码器
+|===

@@ -1,0 +1,17 @@
+@startuml
+autoactivate on
+
+autonumber 1
+Start -> FeignClientRegistrar : registerBeanDefinitions
+autonumber 1.1.1
+FeignClientRegistrar -> FeignClientRegistrar: registerDefaultConfiguration \
+\n 注入全局默认配置 (EnableFeignClients#defaultConfiguration)
+autonumber 1.2.1
+FeignClientRegistrar -> FeignClientRegistrar: registerFeignClients \
+\n 注入FeignClient (EnableFeignClients#defaultConfiguration)
+FeignClientRegistrar -> FeignClientFactoryBean: 实际注入的class
+FeignClientFactoryBean -> FeignContext
+autonumber 2
+Start -> FeignAutoConfiguration : FeignAutoConfiguration
+FeignAutoConfiguration -> FeignContext ** : 使用@AutoWired注入
+@enduml

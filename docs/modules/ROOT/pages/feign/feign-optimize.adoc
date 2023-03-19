@@ -1,0 +1,115 @@
+= Feign 的性能优化
+
+== 设置日志级别
+
+|===
+| 级别 | 打印内容
+
+| NONE （默认值）
+| 不记录任何日志
+| BASIC
+| 仅记录请求方法、URL、响应状态代码以及执行时间
+| HEADERS
+| 记录BASIC级别的基础上，记录请求和响应的header
+| FULL
+| 记录请求和响应的header、body和元数据
+|===
+
+[IMPORTANT]
+====
+Feign 日志记录仅响应 `*DEBUG*` 级别，需要同时设置 Feign 和 Feign 所在包的日志级别为 `*DEBUG*`
+
+.feign.SynchronousMethodHandler#executeAndDecode
+[source,java,indent=0]
+----
+if (logLevel != Logger.Level.NONE) {
+    logger.logRequest(metadata.configKey(), logLevel, request);
+}
+----
+
+.feign.slf4j.Slf4jLogger#logRequest
+[source,java,indent=0]
+----
+@Override
+protected void logRequest(String configKey, Level logLevel, Request request) {
+    if (logger.isDebugEnabled()) {
+      super.logRequest(configKey, logLevel, request);
+    }
+}
+----
+====
+
+== 设置请求/响应压缩
+
+=== 概述
+
+`gzip` 是一种数据格式，采用 `deflate` 算法压缩数据`，gzip` 是一种流行的文件压缩算法，应用十分广泛，尤其是在 Linux 平台。
+
+当 `Gzip` 压缩一个纯文本文件时，效果是非常明显的，大约可以减少 70％ 以上的文件大小。
+
+网络数据经过压缩后实际上降低了网络传输的字节数，最明显的好处就是可以加快网页加载的速度。网页加载速度加快的好处不言而喻，除了节省流量，改善用户的浏览体验外，另一个潜在的好处是 `Gzip` 与搜索引擎的抓取工具有着更好的关系。
+
+=== HTTP协议中关于压缩传输的规定
+
+客户端向服务器请求中带有：`Accept-Encoding:gzip，deflate` 字段，向服务器表示客户端支持的压缩格式（`gzip` 或者 `deflate`），如果不发送该消息头，服务端默认是不会压缩的。
+
+服务端在收到请求之后，如果发现请求头中含有 `Accept-Encoding` 字段，并且支持该类型压缩，就会对响应报文压缩之后返回给客户端，并且携带 `Content-Encoding:gzip` 消息头，表示响应报文是根据该格式进行压缩的。
+
+客户端接收到请求之后，先判断是否有 `Content-Encoding` 消息头，如果有，按该格式解压报文。否则按正常报文处理。
+
+
+[source,yaml,indent=0]
+----
+feign:
+  compression:
+    request:
+      enabled: true
+      mime-types: text/xml,application/xml,application/json
+      min-request-size: 2048
+    response:
+      enabled: true
+----
+
+== 替换默认的HTTP实现
+
+=== https://hc.apache.org/httpcomponents-client-5.2.x/index.html[Apache HttpClient]
+
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>io.github.openfeign</groupId>
+    <artifactId>feign-httpclient</artifactId>
+    <version>${openfeign.version}</version>
+</dependency>
+----
+
+[source,yml,indent=0]
+----
+feign:
+  httpclient:
+    max-connections: 200
+    max-connections-per-route: 50
+----
+
+=== https://square.github.io/okhttp/[OkHttp]
+
+https://segmentfault.com/a/1190000038840773[性能最好]。
+
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>io.github.openfeign</groupId>
+    <artifactId>feign-okhttp</artifactId>
+    <version>${openfeign.version}</version>
+</dependency>
+----
+
+[source,yml,indent=0]
+----
+feign:
+  httpclient:
+    max-connections: 200
+    max-connections-per-route: 50
+  okhttp:
+    enable: true
+----
