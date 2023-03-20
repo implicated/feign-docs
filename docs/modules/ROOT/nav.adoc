@@ -2,10 +2,10 @@
 * Feign
 ** xref:feign/feign-component.adoc[]
 ** xref:feign/feign-core.adoc[]
-** xref:feign/feign-optimize.adoc[]
-** xref:feign/feign-future.adoc[]
 * Spring Cloud Open Feign
 ** xref:spring-cloud-open-feign/spring-feign-integrations.adoc[]
 ** xref:spring-cloud-open-feign/spring-mvc-support.adoc[]
-* xref:qa.adoc[]
+** xref:spring-cloud-open-feign/spring-feign-configuration.adoc[]
+* xref:optimize.adoc[]
+* xref:future.adoc[]
 * xref:ref.adoc[]

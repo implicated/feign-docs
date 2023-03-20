@@ -1,4 +1,4 @@
-= Feign 的性能优化
+= Open Feign 的性能优化
 
 == 设置日志级别
 
@@ -57,6 +57,7 @@ protected void logRequest(String configKey, Level logLevel, Request request) {
 
 客户端接收到请求之后，先判断是否有 `Content-Encoding` 消息头，如果有，按该格式解压报文。否则按正常报文处理。
 
+=== 配置
 
 [source,yaml,indent=0]
 ----
@@ -112,4 +113,85 @@ feign:
     max-connections-per-route: 50
   okhttp:
     enable: true
+----
+
+== 添加缓存
+
+== 自定义异常处理
+
+[source,java,indent=0]
+----
+public class CustomErrorDecoder implements ErrorDecoder {
+    @Override
+    public Exception decode(String methodKey, Response response) {
+
+        switch (response.status()){
+            case 400:
+                return new BadRequestException();
+            case 404:
+                return new NotFoundException();
+            default:
+                return new Exception("error");
+        }
+    }
+}
+----
+
+[source,java,indent=0]
+----
+public class ClientConfiguration {
+
+    @Bean
+    public ErrorDecoder errorDecoder() {
+        return new CustomErrorDecoder();
+    }
+}
+----
+
+== Feign-Form
+
+`Feign-form` 增加了对 `application/x-www-form-urlencoded` 和 `multipart/form-data` 的编码支持。
+
+[source,xml,indent=0]
+----
+<dependency>
+    <groupId>io.github.openfeign.form</groupId>
+    <artifactId>feign-form-spring</artifactId>
+    <version>3.8.0</version>
+</dependency>
+----
+
+=== 上传文件 (`multipart/form-data`)
+
+[source,java,indent=0]
+----
+@FeignClient(configuration = AliyunOssClient.MultipartSupportConfig.class) {
+
+    @Bean
+    class MultipartSupportConfig {
+        @Bean
+        public Encoder feignFormEncoder() {
+            return new SpringFormEncoder();
+        }
+    }
+}
+----
+
+=== Form表单提交 (`application/x-www-form-urlencoded`)
+
+[source,java,indent=0]
+----
+@FeignClient(configuration = AliyunOssClient.MultipartSupportConfig.class) {
+
+    @Bean
+    class MultipartSupportConfig {
+        @Autowired
+        private ObjectFactory<HttpMessageConverters> messageConverters;
+
+        @Bean
+        public Encoder feignFormEncoder() {
+            return new SpringFormEncoder(new SpringEncoder(messageConverters));
+        }
+    }
+}
 ----

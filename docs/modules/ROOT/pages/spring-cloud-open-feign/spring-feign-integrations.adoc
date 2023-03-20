@@ -149,13 +149,28 @@ public void registerFeignClients(AnnotationMetadata metadata, BeanDefinitionRegi
                 registerClientConfiguration(registry, name, attributes.get("configuration"));
 
                 // 循环注入 @FeignClient 对象，name：className
-                registerFeignClient(registry, annotationMetadata, attributes);
+                registerFeignClient(registry,
+                    annotationMetadata, <1>
+                    attributes); <2>
 
             }
         }
     }
 }
 ----
+
+<1> .AnnotationMetadata
++
+[%collapsible]
+====
+image::annotation-matedata.png[]
+====
+<2> FeignClient AnnotationAttributes
++
+[%collapsible]
+====
+image::attributes.png[]
+====
 
 .org.springframework.cloud.openfeign.FeignClientsRegistrar#registerFeignClient
 [source,java,indent=0]

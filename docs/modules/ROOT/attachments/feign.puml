@@ -1,29 +1,14 @@
 @startuml
-Feign.Builder -> FeignClientFactoryBean : getTarget
-activate FeignClientFactoryBean
-FeignClientFactoryBean -> FeignClientFactoryBean : feign
-activate FeignClientFactoryBean
-FeignClientFactoryBean --> FeignClientFactoryBean
-deactivate FeignClientFactoryBean
-FeignClientFactoryBean -> FeignClientFactoryBean : cleanPath
-activate FeignClientFactoryBean
-FeignClientFactoryBean --> FeignClientFactoryBean
-deactivate FeignClientFactoryBean
-FeignClientFactoryBean -> FeignClientFactoryBean : loadBalance
-activate FeignClientFactoryBean
-FeignClientFactoryBean -> Targeter : target
-activate Targeter
-Targeter --> FeignClientFactoryBean
-deactivate Targeter
-FeignClientFactoryBean --> FeignClientFactoryBean
-deactivate FeignClientFactoryBean
-FeignClientFactoryBean -> FeignClientFactoryBean : cleanPath
-activate FeignClientFactoryBean
-FeignClientFactoryBean --> FeignClientFactoryBean
-deactivate FeignClientFactoryBean
-FeignClientFactoryBean -> Targeter : target
-activate Targeter
-Targeter --> FeignClientFactoryBean
-deactivate Targeter
+autonumber
+
+activate Feign.Builder
+Feign.Builder -> Feign.Builder : <b>build</b>
+Feign.Builder -> ReflectiveFeign --++: <b>newInstance</b>
+ReflectiveFeign -> ReflectiveFeign.ParseHandlersByName ++: <b>apply</b> (根据target对象创建方法名和方法处理器的map映射)
 return
+ReflectiveFeign -> FeignInvocationHandler ++: <b>create</b> (设置调用处理器)
+return
+ReflectiveFeign -> Proxy ++: <b>newProxyInstance</b> 生成 JDK 动态代理
+return
+return 返回动态代理
 @enduml

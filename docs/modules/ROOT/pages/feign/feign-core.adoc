@@ -21,7 +21,7 @@
 
 [plantuml]
 ----
-// include::example$feign.puml[]
+include::attachment$feign.puml[]
 ----
 
 == Feign 的入口方法
@@ -133,7 +133,7 @@ public <T> T newInstance(Target<T> target) {
             methodToHandler.put(method, nameToHandler.get(Feign.configKey(target.type(), method)));
         }
     }
-    // 设置拦截器
+    // 设置调用处理器
     // 创建动态代理，factory 是 InvocationHandlerFactory.Default，创建出来的是
     // feign.ReflectiveFeign.FeignInvocationHandler.dispatch 持有 methodToHandler 引用
     // ReflectiveFeign.FeignInvocationHandler，也就是说后续对方法的调用都会进入到该对象的 invoke 方法
@@ -152,6 +152,18 @@ public <T> T newInstance(Target<T> target) {
 ----
 
 <1> 根据指定的 `contract` 解析 `target`
++
+[%collapsible]
+.Map<String, MethodHandler>
+====
+image::name-to-hander.png[]
+====
++
+[%collapsible]
+.InvocationHandler
+====
+image::invocatio-handler.png[]
+====
 
 === 解析方法元数据
 
