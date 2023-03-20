@@ -1,0 +1,20 @@
+@startuml
+autonumber
+
+?-> FeignClientRegistrar ++: Spring应用上下文refresh，处理<b>@lmport时
+FeignClientRegistrar -> FeignClientRegistrar: <b>registerDefaultConfiguration \
+\n 注入全局默认配置
+FeignClientRegistrar -> FeignClientRegistrar: <b>registerFeignClients \
+\n 注入<b>FeignClient
+FeignClientRegistrar -> FeignClientFactoryBean ++: 实际注入的类是 <b>FeignClientFactoryBean
+[-> FeignClientFactoryBean: bean工厂获取bean时，执行 <b>getObject
+'[-> FeignClientFactoryBean: bean工厂获取bean时，<b>getObject
+'FeignClientFactoryBean -> FeignContext
+FeignClientFactoryBean -> Targeter ++ : <b>getTarget
+Targeter  -> Feign.Builder ++ : <b>target
+Feign.Builder -> Feign.Builder : <b>build
+return
+return
+return
+return return到bean工厂
+@enduml

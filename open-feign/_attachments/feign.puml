@@ -1,0 +1,29 @@
+@startuml
+Feign.Builder -> FeignClientFactoryBean : getTarget
+activate FeignClientFactoryBean
+FeignClientFactoryBean -> FeignClientFactoryBean : feign
+activate FeignClientFactoryBean
+FeignClientFactoryBean --> FeignClientFactoryBean
+deactivate FeignClientFactoryBean
+FeignClientFactoryBean -> FeignClientFactoryBean : cleanPath
+activate FeignClientFactoryBean
+FeignClientFactoryBean --> FeignClientFactoryBean
+deactivate FeignClientFactoryBean
+FeignClientFactoryBean -> FeignClientFactoryBean : loadBalance
+activate FeignClientFactoryBean
+FeignClientFactoryBean -> Targeter : target
+activate Targeter
+Targeter --> FeignClientFactoryBean
+deactivate Targeter
+FeignClientFactoryBean --> FeignClientFactoryBean
+deactivate FeignClientFactoryBean
+FeignClientFactoryBean -> FeignClientFactoryBean : cleanPath
+activate FeignClientFactoryBean
+FeignClientFactoryBean --> FeignClientFactoryBean
+deactivate FeignClientFactoryBean
+FeignClientFactoryBean -> Targeter : target
+activate Targeter
+Targeter --> FeignClientFactoryBean
+deactivate Targeter
+return
+@enduml
