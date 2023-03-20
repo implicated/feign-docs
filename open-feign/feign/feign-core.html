@@ -71,12 +71,6 @@
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="feign-core.html">Feign 的核心流程</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="feign-optimize.html">Feign 的性能优化</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="feign-future.html">Feign 的未来</a>
-  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -89,10 +83,16 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../spring-cloud-open-feign/spring-mvc-support.html">SpringMVC 注解支持原理</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../spring-cloud-open-feign/spring-feign-configuration.html">Spring Cloud Open Feign 配置项</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../qa.html">常见问题</a>
+    <a class="nav-link" href="../optimize.html">Open Feign 的性能优化</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../future.html">Feign 的未来</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../ref.html">参考文档</a>
@@ -198,7 +198,7 @@
 <div class="sectionbody">
 <div class="imageblock plantuml">
 <div class="content">
-<img src="http://www.plantuml.com/plantuml/png/SoWkIImgAStDuTBNLyZCIyufJKcriagjICmjo4bLIKlDJC_JAm1AHyToEQJcfG1P0000" alt="diagram">
+<img src="http://www.plantuml.com/plantuml/png/VL71IiD05BpdA_QebDIxb5AAY5MGuXziacS999kosLHpKmnIn4AGA6f1M_IGKwrugaNz6NUJpp19KpL4FEsRVM_cpSusR8OfSqn3mWwpY6CgG2K9gqplOGPe4_GEgJOTtT2I-m92ShtOHkkefjIL5DJMb7fvUW_s3KYL8MiXMQvKCWw1WnP9Z10LCcPfiCIjjZ6rOGiJpG1gDzrTR0BArN2tQxYf3beHevaOJ98NTe3nfrdyFERz8P-_YgkPUBda_e1VdEVrenVvf_mcZ6uz4tV5zOXFlLM90dCe-SjGLhH8pr8nqosIMrbwK2aayIrCn9Ftw6qIJq-Y8FnUyvzqcrg7Blh99iE_0q9HS2_wFjhUs47yB1H7nv_pXqHtgRauKFmHyE5TOQ01H4i--mi0" alt="diagram">
 </div>
 </div>
 </div>
@@ -350,7 +350,7 @@ public &lt;T&gt; T newInstance(Target&lt;T&gt; target) {
             methodToHandler.put(method, nameToHandler.get(Feign.configKey(target.type(), method)));
         }
     }
-    // 设置拦截器
+    // 设置调用处理器
     // 创建动态代理，factory 是 InvocationHandlerFactory.Default，创建出来的是
     // feign.ReflectiveFeign.FeignInvocationHandler.dispatch 持有 methodToHandler 引用
     // ReflectiveFeign.FeignInvocationHandler，也就是说后续对方法的调用都会进入到该对象的 invoke 方法
@@ -372,7 +372,27 @@ public &lt;T&gt; T newInstance(Target&lt;T&gt; target) {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>根据指定的 <code>contract</code> 解析 <code>target</code></td>
+<td>根据指定的 <code>contract</code> 解析 <code>target</code>
+<details>
+<summary class="title">Map&lt;String, MethodHandler&gt;</summary>
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/name-to-hander.png" alt="name to hander">
+</div>
+</div>
+</div>
+</details>
+<details>
+<summary class="title">InvocationHandler</summary>
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/invocatio-handler.png" alt="invocatio handler">
+</div>
+</div>
+</div>
+</details></td>
 </tr>
 </table>
 </div>

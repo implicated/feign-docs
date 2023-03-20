@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Spring Cloud Open Feign 的配置项 :: Implicated</title>
+    <title>Spring Cloud Open Feign 配置项 :: Implicated</title>
     <link rel="canonical" href="https://docs.implicated.com/open-feign/spring-cloud-open-feign/spring-feign-configuration.html">
     <meta name="generator" content="Antora 3.1.2">
     <link rel="stylesheet" href="../../_/css/site.css">
@@ -71,12 +71,6 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../feign/feign-core.html">Feign 的核心流程</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../feign/feign-optimize.html">Feign 的性能优化</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../feign/feign-future.html">Feign 的未来</a>
-  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -89,10 +83,16 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="spring-mvc-support.html">SpringMVC 注解支持原理</a>
   </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="spring-feign-configuration.html">Spring Cloud Open Feign 配置项</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../qa.html">常见问题</a>
+    <a class="nav-link" href="../optimize.html">Open Feign 的性能优化</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../future.html">Feign 的未来</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../ref.html">参考文档</a>
@@ -129,7 +129,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Learn OpenFeign</a></li>
-    <li><a href="spring-feign-configuration.html">Spring Cloud Open Feign 的配置项</a></li>
+    <li>Spring Cloud Open Feign</li>
+    <li><a href="spring-feign-configuration.html">Spring Cloud Open Feign 配置项</a></li>
   </ul>
 </nav>
 <!---->
@@ -142,7 +143,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Spring Cloud Open Feign 的配置项</h1>
+<h1 class="page">Spring Cloud Open Feign 配置项</h1>
 <div class="sect1">
 <h2 id="_feignclientsconfiguration默认值"><a class="anchor" href="#_feignclientsconfiguration默认值"></a>FeignClientsConfiguration（默认值）</h2>
 <div class="sectionbody">

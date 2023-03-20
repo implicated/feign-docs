@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Feign 的性能优化 :: Implicated</title>
-    <link rel="canonical" href="https://docs.implicated.com/open-feign/feign/feign-optimize.html">
+    <title>Open Feign 的性能优化 :: Implicated</title>
+    <link rel="canonical" href="https://docs.implicated.com/open-feign/optimize.html">
     <meta name="generator" content="Antora 3.1.2">
-    <link rel="stylesheet" href="../../_/css/site.css">
-    <script>var uiRootPath = '../../_'</script>
+    <link rel="stylesheet" href="../_/css/site.css">
+    <script>var uiRootPath = '../_'</script>
   </head>
   <body class="article">
 <header class="header">
@@ -54,28 +54,22 @@
     <div class="panels">
 <div class="nav-panel-menu is-active" data-panel="menu">
   <nav class="nav-menu">
-    <h3 class="title"><a href="../index.html">Learn OpenFeign</a></h3>
+    <h3 class="title"><a href="index.html">Learn OpenFeign</a></h3>
 <ul class="nav-list">
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../introduction.html">基本介绍</a>
+    <a class="nav-link" href="introduction.html">基本介绍</a>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <span class="nav-text">Feign</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="feign-component.html">Feign 的组成</a>
+    <a class="nav-link" href="feign/feign-component.html">Feign 的组成</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="feign-core.html">Feign 的核心流程</a>
-  </li>
-  <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="feign-optimize.html">Feign 的性能优化</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="feign-future.html">Feign 的未来</a>
+    <a class="nav-link" href="feign/feign-core.html">Feign 的核心流程</a>
   </li>
 </ul>
   </li>
@@ -84,18 +78,24 @@
     <span class="nav-text">Spring Cloud Open Feign</span>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../spring-cloud-open-feign/spring-feign-integrations.html">Spring 整合 Feign 原理</a>
+    <a class="nav-link" href="spring-cloud-open-feign/spring-feign-integrations.html">Spring 整合 Feign 原理</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../spring-cloud-open-feign/spring-mvc-support.html">SpringMVC 注解支持原理</a>
+    <a class="nav-link" href="spring-cloud-open-feign/spring-mvc-support.html">SpringMVC 注解支持原理</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="spring-cloud-open-feign/spring-feign-configuration.html">Spring Cloud Open Feign 配置项</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../qa.html">常见问题</a>
+  <li class="nav-item is-current-page" data-depth="1">
+    <a class="nav-link" href="optimize.html">Open Feign 的性能优化</a>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../ref.html">参考文档</a>
+    <a class="nav-link" href="future.html">Feign 的未来</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="ref.html">参考文档</a>
   </li>
 </ul>
   </li>
@@ -109,10 +109,10 @@
   </div>
   <ul class="components">
     <li class="component is-current">
-      <a class="title" href="../index.html">Learn OpenFeign</a>
+      <a class="title" href="index.html">Learn OpenFeign</a>
       <ul class="versions">
         <li class="version is-current is-latest">
-          <a href="../index.html">default</a>
+          <a href="index.html">default</a>
         </li>
       </ul>
     </li>
@@ -125,17 +125,16 @@
 <main class="article">
 <div class="toolbar" role="navigation">
 <button class="nav-toggle"></button>
-  <a href="../index.html" class="home-link"></a>
+  <a href="index.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="../index.html">Learn OpenFeign</a></li>
-    <li>Feign</li>
-    <li><a href="feign-optimize.html">Feign 的性能优化</a></li>
+    <li><a href="index.html">Learn OpenFeign</a></li>
+    <li><a href="optimize.html">Open Feign 的性能优化</a></li>
   </ul>
 </nav>
 <!---->
 <!--  -->
-<!--  <div class="edit-this-page"><a href="https://github.com/implicated/feign-docs/edit/master/docs/modules/ROOT/pages/feign/feign-optimize.adoc">Edit this Page</a></div>-->
+<!--  <div class="edit-this-page"><a href="https://github.com/implicated/feign-docs/edit/master/docs/modules/ROOT/pages/optimize.adoc">Edit this Page</a></div>-->
 <!--  -->
 </div>
   <div class="content">
@@ -143,7 +142,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Feign 的性能优化</h1>
+<h1 class="page">Open Feign 的性能优化</h1>
 <div class="sect1">
 <h2 id="_设置日志级别"><a class="anchor" href="#_设置日志级别"></a>设置日志级别</h2>
 <div class="sectionbody">
@@ -238,6 +237,9 @@ protected void logRequest(String configKey, Level logLevel, Request request) {
 <div class="paragraph">
 <p>客户端接收到请求之后，先判断是否有 <code>Content-Encoding</code> 消息头，如果有，按该格式解压报文。否则按正常报文处理。</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_配置"><a class="anchor" href="#_配置"></a>配置</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">feign:
@@ -303,6 +305,100 @@ protected void logRequest(String configKey, Level logLevel, Request request) {
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_添加缓存"><a class="anchor" href="#_添加缓存"></a>添加缓存</h2>
+<div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="_自定义异常处理"><a class="anchor" href="#_自定义异常处理"></a>自定义异常处理</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CustomErrorDecoder implements ErrorDecoder {
+    @Override
+    public Exception decode(String methodKey, Response response) {
+
+        switch (response.status()){
+            case 400:
+                return new BadRequestException();
+            case 404:
+                return new NotFoundException();
+            default:
+                return new Exception("error");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ClientConfiguration {
+
+    @Bean
+    public ErrorDecoder errorDecoder() {
+        return new CustomErrorDecoder();
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_feign_form"><a class="anchor" href="#_feign_form"></a>Feign-Form</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Feign-form</code> 增加了对 <code>application/x-www-form-urlencoded</code> 和 <code>multipart/form-data</code> 的编码支持。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;io.github.openfeign.form&lt;/groupId&gt;
+    &lt;artifactId&gt;feign-form-spring&lt;/artifactId&gt;
+    &lt;version&gt;3.8.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_上传文件_multipartform_data"><a class="anchor" href="#_上传文件_multipartform_data"></a>上传文件 (<code>multipart/form-data</code>)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@FeignClient(configuration = AliyunOssClient.MultipartSupportConfig.class) {
+
+    @Bean
+    class MultipartSupportConfig {
+        @Bean
+        public Encoder feignFormEncoder() {
+            return new SpringFormEncoder();
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_form表单提交_applicationx_www_form_urlencoded"><a class="anchor" href="#_form表单提交_applicationx_www_form_urlencoded"></a>Form表单提交 (<code>application/x-www-form-urlencoded</code>)</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@FeignClient(configuration = AliyunOssClient.MultipartSupportConfig.class) {
+
+    @Bean
+    class MultipartSupportConfig {
+        @Autowired
+        private ObjectFactory&lt;HttpMessageConverters&gt; messageConverters;
+
+        @Bean
+        public Encoder feignFormEncoder() {
+            return new SpringFormEncoder(new SpringEncoder(messageConverters));
+        }
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
 </article>
   </div>
 </main>
@@ -311,7 +407,7 @@ protected void logRequest(String configKey, Level logLevel, Request request) {
   <p>This page was built using the Antora default UI.</p>
   <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
 </footer>
-<script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
-<script async src="../../_/js/vendor/highlight.js"></script>
+<script id="site-script" src="../_/js/site.js" data-ui-root-path="../_"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
   </body>
 </html>

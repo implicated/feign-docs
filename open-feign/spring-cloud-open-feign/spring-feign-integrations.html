@@ -71,12 +71,6 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../feign/feign-core.html">Feign 的核心流程</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../feign/feign-optimize.html">Feign 的性能优化</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../feign/feign-future.html">Feign 的未来</a>
-  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -89,10 +83,16 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="spring-mvc-support.html">SpringMVC 注解支持原理</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="spring-feign-configuration.html">Spring Cloud Open Feign 配置项</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../qa.html">常见问题</a>
+    <a class="nav-link" href="../optimize.html">Open Feign 的性能优化</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../future.html">Feign 的未来</a>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../ref.html">参考文档</a>
@@ -361,13 +361,47 @@ public void registerBeanDefinitions(AnnotationMetadata metadata, BeanDefinitionR
                 registerClientConfiguration(registry, name, attributes.get("configuration"));
 
                 // 循环注入 @FeignClient 对象，name：className
-                registerFeignClient(registry, annotationMetadata, attributes);
+                registerFeignClient(registry,
+                    annotationMetadata, <i class="conum" data-value="1"></i><b>(1)</b>
+                    attributes); <i class="conum" data-value="2"></i><b>(2)</b>
 
             }
         }
     }
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>.AnnotationMetadata
+<details>
+<summary class="title">Details</summary>
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/annotation-matedata.png" alt="annotation matedata">
+</div>
+</div>
+</div>
+</details></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>FeignClient AnnotationAttributes
+<details>
+<summary class="title">Details</summary>
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/attributes.png" alt="attributes">
+</div>
+</div>
+</div>
+</details></td>
+</tr>
+</table>
 </div>
 <div class="listingblock">
 <div class="title">org.springframework.cloud.openfeign.FeignClientsRegistrar#registerFeignClient</div>
