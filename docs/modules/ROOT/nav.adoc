@@ -7,4 +7,5 @@
 * Spring Cloud Open Feign
 ** xref:spring-cloud-open-feign/spring-feign-integrations.adoc[]
 ** xref:spring-cloud-open-feign/spring-mvc-support.adoc[]
+* xref:qa.adoc[]
 * xref:ref.adoc[]

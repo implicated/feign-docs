@@ -17,6 +17,13 @@
 |image::feign-context.png[]
 |===
 
+== 时序图
+
+[plantuml]
+----
+include::attachment$spring-cloud-open-feign.puml[]
+----
+
 == 入口
 
 --
@@ -488,19 +495,3 @@ public class FeignHttpClientProperties {
 ----
 
 image::feign-http-client-properties.png[]
-
-== 总结
-
-=== 流程图
-
-[plantuml]
-----
-// include::example$spring-cloud-open-feign.puml[]
-----
-
-=== 时序图
-
-[plantuml]
-----
-// include::example$feign.puml[]
-----

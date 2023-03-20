@@ -17,6 +17,13 @@
 |image::synchronous-method-handler.png[]
 |===
 
+== 时序图
+
+[plantuml]
+----
+// include::example$feign.puml[]
+----
+
 == Feign 的入口方法
 
 通过Feign.builder()生成Feign.Builder的构造者对象，然后设置相关的参数，再调用target方法构造出动态代理。
@@ -511,20 +518,4 @@ Response convertResponse(HttpURLConnection connection, Request request) throws I
             .body(stream, length)
             .build();
 }
-----
-
-== 总结
-
-=== 流程图
-
-[plantuml]
-----
-// include::example$spring-cloud-open-feign.puml[]
-----
-
-=== 时序图
-
-[plantuml]
-----
-// include::example$feign.puml[]
 ----

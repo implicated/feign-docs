@@ -1,8 +1,5 @@
 @startuml
-autoactivate on
-
-participant Actor
-Actor -> FeignClientFactoryBean : getTarget
+Feign.Builder -> FeignClientFactoryBean : getTarget
 activate FeignClientFactoryBean
 FeignClientFactoryBean -> FeignClientFactoryBean : feign
 activate FeignClientFactoryBean

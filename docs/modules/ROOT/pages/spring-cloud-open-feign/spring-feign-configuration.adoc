@@ -1,4 +1,4 @@
-= Feign 配置项
+= Spring Cloud Open Feign 的配置项
 
 == FeignClientsConfiguration（默认值）
 
