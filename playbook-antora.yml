@@ -12,12 +12,11 @@ ui:
   bundle:
     url: https://raw.githubusercontent.com/implicated/asciidoc-publish-template/ui/ui-bundle.zip?raw=true
     snapshot: true
-  supplemental_files:
-    - path: ui.yml
-      contents: |
-        static_files:
-        - .nojekyll
-    - path: .nojekyll
+runtime:
+  fetch: true
+  cache_dir: ./.cache/antora
+  log:
+    failure_level: error
 output:
   clean: true
 
@@ -26,8 +25,8 @@ antora:
     - require: '@antora/lunr-extension'
 asciidoc:
   extensions:
-    - asciidoctor-highlight.js/
     - asciidoctor-kroki
+    - asciidoctor-highlight.js/
   attributes:
     experimental: ''
     page-pagination: ''

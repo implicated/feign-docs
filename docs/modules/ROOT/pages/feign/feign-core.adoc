@@ -450,7 +450,7 @@ Object executeAndDecode(RequestTemplate template, Options options) throws Throwa
 
 === 发送HTTP请求
 
-`client` 是一个 `Client` 接口，默认实现类是`Client.Default`，使用 `java.net.HttpURLConnection` 发送 `HTTP` 请求。
+`client` 是一个 `Client` 接口，默认实现类是 `Client.Default`， 使用 `java.net.HttpURLConnection` 发送 `HTTP` 请求。
 
 feign还实现了：
 
