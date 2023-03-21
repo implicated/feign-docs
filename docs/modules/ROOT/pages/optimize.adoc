@@ -73,7 +73,7 @@ feign:
 
 == 替换默认的HTTP实现
 
-=== https://hc.apache.org/httpcomponents-client-5.2.x/index.html[Apache HttpClient]
+=== https://hc.apache.org/httpcomponents-client-5.2.x/index.html[Apache HttpClient^]
 
 [source,xml,indent=0]
 ----
@@ -92,9 +92,9 @@ feign:
     max-connections-per-route: 50
 ----
 
-=== https://square.github.io/okhttp/[OkHttp]
+=== https://square.github.io/okhttp/[OkHttp^]
 
-https://segmentfault.com/a/1190000038840773[性能最好]。
+https://segmentfault.com/a/1190000038840773[性能最好^]。
 
 [source,xml,indent=0]
 ----

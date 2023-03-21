@@ -13,7 +13,7 @@
 |===
 | ReflectiveFeign | SynchronousMethodHandler
 
-|image::reflective-feign.png[^]
+|image::reflective-feign.png[]
 |image::synchronous-method-handler.png[]
 |===
 

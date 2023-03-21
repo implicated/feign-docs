@@ -26,4 +26,4 @@ public class MyApp {
 }
 ----
 
-== https://github.com/spring-projects/spring-framework/blob/main/spring-webflux/src/main/java/org/springframework/web/reactive/function/client/WebClient.java[Spring WebClient]
+== https://github.com/spring-projects/spring-framework/blob/main/spring-webflux/src/main/java/org/springframework/web/reactive/function/client/WebClient.java[Spring WebClient^]

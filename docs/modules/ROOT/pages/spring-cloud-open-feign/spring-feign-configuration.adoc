@@ -116,7 +116,7 @@ public interface FooClient {
 
 == FeignHttpClient Properties
 
-使用 https://hc.apache.org/httpcomponents-client-5.2.x/index.html[Apache HttpClient] 发送 `HTTP` 请求。
+使用 https://hc.apache.org/httpcomponents-client-5.2.x/index.html[Apache HttpClient^] 发送 `HTTP` 请求。
 
 [cols="3,1,2"]
 |===

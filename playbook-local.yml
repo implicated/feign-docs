@@ -27,11 +27,11 @@ antora:
 asciidoc:
   extensions:
     - asciidoctor-highlight.js/
-    - asciidoctor-kroki
+    - asciidoctor-plantuml
   attributes:
     experimental: ''
     page-pagination: ''
     idprefix: ''
     idseparator: '-'
     source-highlighter: highlightjs-ext
-    kroki-fetch-diagram: true
+    plantuml-server-url: http://www.plantuml.com/plantuml
