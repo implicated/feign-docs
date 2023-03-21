@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Feign 的核心流程 :: Implicated</title>
     <link rel="canonical" href="https://docs.implicated.com/open-feign/feign/feign-core.html">
+    <link rel="prev" href="feign-component.html">
+    <link rel="next" href="../spring-cloud-open-feign/spring-feign-integrations.html">
     <meta name="generator" content="Antora 3.1.2">
     <link rel="stylesheet" href="../../_/css/site.css">
     <script>var uiRootPath = '../../_'</script>
@@ -14,6 +16,11 @@
   <nav class="navbar">
     <div class="navbar-brand">
       <a class="navbar-item" href="https://docs.implicated.com">Implicated</a>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <input id="search-input" type="text" placeholder="Search the docs">
+        </div>
+      </div>
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
         <span></span>
@@ -194,17 +201,17 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="_时序图"><a class="anchor" href="#_时序图"></a>时序图</h2>
+<h2 id="时序图"><a class="anchor" href="#时序图"></a>时序图</h2>
 <div class="sectionbody">
-<div class="imageblock plantuml">
+<div class="imageblock kroki">
 <div class="content">
-<img src="http://www.plantuml.com/plantuml/png/VL71IiD05BpdA_QebDIxb5AAY5MGuXziacS999kosLHpKmnIn4AGA6f1M_IGKwrugaNz6NUJpp19KpL4FEsRVM_cpSusR8OfSqn3mWwpY6CgG2K9gqplOGPe4_GEgJOTtT2I-m92ShtOHkkefjIL5DJMb7fvUW_s3KYL8MiXMQvKCWw1WnP9Z10LCcPfiCIjjZ6rOGiJpG1gDzrTR0BArN2tQxYf3beHevaOJ98NTe3nfrdyFERz8P-_YgkPUBda_e1VdEVrenVvf_mcZ6uz4tV5zOXFlLM90dCe-SjGLhH8pr8nqosIMrbwK2aayIrCn9Ftw6qIJq-Y8FnUyvzqcrg7Blh99iE_0q9HS2_wFjhUs47yB1H7nv_pXqHtgRauKFmHyE5TOQ01H4i--mi0" alt="diagram">
+<img src="../_images/diag-b50deb4e33107e85d10d5bf8c1ea0a2a9a05719d.svg" alt="Diagram">
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_feign_的入口方法"><a class="anchor" href="#_feign_的入口方法"></a>Feign 的入口方法</h2>
+<h2 id="feign-的入口方法"><a class="anchor" href="#feign-的入口方法"></a>Feign 的入口方法</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>通过Feign.builder()生成Feign.Builder的构造者对象，然后设置相关的参数，再调用target方法构造出动态代理。</p>
@@ -212,12 +219,12 @@
 <div class="listingblock">
 <div class="title">Feign.builder()</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public abstract class Feign {
-  public static Builder builder() {
-    return new Builder();
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Feign</span> {
+  <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> Builder <span class="hljs-title function_">builder</span><span class="hljs-params">()</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Builder</span>();
   }
-    public static class Builder {
-      //...
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Builder</span> {
+      <span class="hljs-comment">//...</span>
   }
 }</code></pre>
 </div>
@@ -225,7 +232,7 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="_构建_reflectfeign"><a class="anchor" href="#_构建_reflectfeign"></a>构建 <code>ReflectFeign</code></h2>
+<h2 id="构建-reflectfeign"><a class="anchor" href="#构建-reflectfeign"></a>构建 <code>ReflectFeign</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><code>target</code> 方法内部先调用 <code>build</code> 方法新建一个 <code>ReflectFeign</code> 对象，然后调用 <code>ReflectFeign</code> 的 <code>newInstance</code> 方法创建动态代理。</p>
@@ -233,24 +240,24 @@
 <div class="listingblock">
 <div class="title">feign.Feign</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public &lt;T&gt; T target(Target&lt;T&gt; target) {
-  // spring-cloud-openfeign 注入最终执行方法，最后注入到 Spring 容器中的是接口的代理对象。
-  return build().newInstance(target);
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">public</span> &lt;T&gt; T <span class="hljs-title function_">target</span><span class="hljs-params">(Target&lt;T&gt; target)</span> {
+  <span class="hljs-comment">// spring-cloud-openfeign 注入最终执行方法，最后注入到 Spring 容器中的是接口的代理对象。</span>
+  <span class="hljs-keyword">return</span> build().newInstance(target);
 }
 
-public Feign build() {
-  SynchronousMethodHandler.Factory synchronousMethodHandlerFactory =
-      new SynchronousMethodHandler.Factory(client, retryer, requestInterceptors, logger,
+<span class="hljs-keyword">public</span> Feign <span class="hljs-title function_">build</span><span class="hljs-params">()</span> {
+  SynchronousMethodHandler.<span class="hljs-type">Factory</span> <span class="hljs-variable">synchronousMethodHandlerFactory</span> <span class="hljs-operator">=</span>
+      <span class="hljs-keyword">new</span> <span class="hljs-title class_">SynchronousMethodHandler</span>.Factory(client, retryer, requestInterceptors, logger,
           logLevel, decode404, closeAfterDecode, propagationPolicy);
-  // 解析处理器handlersByName将所有参数进行封装，只有一个 apply 方法
-  ParseHandlersByName handlersByName =
-      new ParseHandlersByName(contract, options, encoder, decoder, queryMapEncoder,
+  <span class="hljs-comment">// 解析处理器handlersByName将所有参数进行封装，只有一个 apply 方法</span>
+  <span class="hljs-type">ParseHandlersByName</span> <span class="hljs-variable">handlersByName</span> <span class="hljs-operator">=</span>
+      <span class="hljs-keyword">new</span> <span class="hljs-title class_">ParseHandlersByName</span>(contract, options, encoder, decoder, queryMapEncoder,
           errorDecoder, synchronousMethodHandlerFactory);
-            return new ReflectiveFeign(
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReflectiveFeign</span>(
                     handlersByName,
-                    // InvocationHandlerFactory 控制反射方法的调度
+                    <span class="hljs-comment">// InvocationHandlerFactory 控制反射方法的调度</span>
                     invocationHandlerFactory, <i class="conum" data-value="1"></i><b>(1)</b>
-                    // QueryMapEncoder 按照 name 和 value 转换 object 到 map
+                    <span class="hljs-comment">// QueryMapEncoder 按照 name 和 value 转换 object 到 map</span>
                     queryMapEncoder); <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
@@ -270,7 +277,7 @@ public Feign build() {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_创建动态代理对象"><a class="anchor" href="#_创建动态代理对象"></a>创建动态代理对象</h2>
+<h2 id="创建动态代理对象"><a class="anchor" href="#创建动态代理对象"></a>创建动态代理对象</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><code>ReflectiveFeign</code> 有五个内部类：</p>
@@ -315,56 +322,56 @@ public Feign build() {
 <div class="listingblock">
 <div class="title">feign.ReflectiveFeign</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// 构造器
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-comment">// 构造器</span>
 ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
                 InvocationHandlerFactory factory,
                 QueryMapEncoder queryMapEncoder) {
-    this.targetToHandlersByName = targetToHandlersByName;
-    this.factory = factory;
-    this.queryMapEncoder = queryMapEncoder;
+    <span class="hljs-built_in">this</span>.targetToHandlersByName = targetToHandlersByName;
+    <span class="hljs-built_in">this</span>.factory = factory;
+    <span class="hljs-built_in">this</span>.queryMapEncoder = queryMapEncoder;
 }
 
-// 构造器
-@Override
-public &lt;T&gt; T newInstance(Target&lt;T&gt; target) {
-    // targetToHandlersByName是构造器传入的ParseHandlersByName对象
-    // 根据target对象创建方法名和方法处理器的map映射
+<span class="hljs-comment">// 构造器</span>
+<span class="hljs-meta">@Override</span>
+<span class="hljs-keyword">public</span> &lt;T&gt; T <span class="hljs-title function_">newInstance</span><span class="hljs-params">(Target&lt;T&gt; target)</span> {
+    <span class="hljs-comment">// targetToHandlersByName是构造器传入的ParseHandlersByName对象</span>
+    <span class="hljs-comment">// 根据target对象创建方法名和方法处理器的map映射</span>
     Map&lt;String, MethodHandler&gt; nameToHandler = targetToHandlersByName.apply(target); <i class="conum" data-value="1"></i><b>(1)</b>
-    // 方法处理器的map映射
-    Map&lt;Method, MethodHandler&gt; methodToHandler = new LinkedHashMap&lt;Method, MethodHandler&gt;();
-    // 默认方法处理器的map映射
-    List&lt;DefaultMethodHandler&gt; defaultMethodHandlers = new LinkedList&lt;DefaultMethodHandler&gt;();
+    <span class="hljs-comment">// 方法处理器的map映射</span>
+    Map&lt;Method, MethodHandler&gt; methodToHandler = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedHashMap</span>&lt;Method, MethodHandler&gt;();
+    <span class="hljs-comment">// 默认方法处理器的map映射</span>
+    List&lt;DefaultMethodHandler&gt; defaultMethodHandlers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;DefaultMethodHandler&gt;();
 
-    // target.type() is @FeignClient 标识的class
-    // 遍历接口所有方法，构建Method -&gt; MethodHandler的映射
-    for (Method method : target.type().getMethods()) {
-        if (method.getDeclaringClass() == Object.class) {
-            continue;
-        } else if (Util.isDefault(method)) {
-            // 默认方法，执行原方法
-            DefaultMethodHandler handler = new DefaultMethodHandler(method);
+    <span class="hljs-comment">// target.type() is @FeignClient 标识的class</span>
+    <span class="hljs-comment">// 遍历接口所有方法，构建Method -&gt; MethodHandler的映射</span>
+    <span class="hljs-keyword">for</span> (Method method : target.type().getMethods()) {
+        <span class="hljs-keyword">if</span> (method.getDeclaringClass() == Object.class) {
+            <span class="hljs-keyword">continue</span>;
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (Util.isDefault(method)) {
+            <span class="hljs-comment">// 默认方法，执行原方法</span>
+            <span class="hljs-type">DefaultMethodHandler</span> <span class="hljs-variable">handler</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultMethodHandler</span>(method);
             defaultMethodHandlers.add(handler);
             methodToHandler.put(method, handler);
-        } else {
-            // 一般方法，执行代理类方法
+        } <span class="hljs-keyword">else</span> {
+            <span class="hljs-comment">// 一般方法，执行代理类方法</span>
             methodToHandler.put(method, nameToHandler.get(Feign.configKey(target.type(), method)));
         }
     }
-    // 设置调用处理器
-    // 创建动态代理，factory 是 InvocationHandlerFactory.Default，创建出来的是
-    // feign.ReflectiveFeign.FeignInvocationHandler.dispatch 持有 methodToHandler 引用
-    // ReflectiveFeign.FeignInvocationHandler，也就是说后续对方法的调用都会进入到该对象的 invoke 方法
-    InvocationHandler handler = factory.create(target, methodToHandler);
-    // 生成 JDK 动态代理
-    T proxy = (T) Proxy.newProxyInstance(target.type().getClassLoader(),
-            new Class&lt;?&gt;[]{target.type()}, handler);
+    <span class="hljs-comment">// 设置调用处理器</span>
+    <span class="hljs-comment">// 创建动态代理，factory 是 InvocationHandlerFactory.Default，创建出来的是</span>
+    <span class="hljs-comment">// feign.ReflectiveFeign.FeignInvocationHandler.dispatch 持有 methodToHandler 引用</span>
+    <span class="hljs-comment">// ReflectiveFeign.FeignInvocationHandler，也就是说后续对方法的调用都会进入到该对象的 invoke 方法</span>
+    <span class="hljs-type">InvocationHandler</span> <span class="hljs-variable">handler</span> <span class="hljs-operator">=</span> factory.create(target, methodToHandler);
+    <span class="hljs-comment">// 生成 JDK 动态代理</span>
+    <span class="hljs-type">T</span> <span class="hljs-variable">proxy</span> <span class="hljs-operator">=</span> (T) Proxy.newProxyInstance(target.type().getClassLoader(),
+            <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[]{target.type()}, handler);
 
-    // 绑定默认方法到代理上
-    for (DefaultMethodHandler defaultMethodHandler : defaultMethodHandlers) {
+    <span class="hljs-comment">// 绑定默认方法到代理上</span>
+    <span class="hljs-keyword">for</span> (DefaultMethodHandler defaultMethodHandler : defaultMethodHandlers) {
         defaultMethodHandler.bindTo(proxy);
     }
-    // 最终注入到 Spring 容器
-    return proxy;
+    <span class="hljs-comment">// 最终注入到 Spring 容器</span>
+    <span class="hljs-keyword">return</span> proxy;
 }</code></pre>
 </div>
 </div>
@@ -397,7 +404,7 @@ public &lt;T&gt; T newInstance(Target&lt;T&gt; target) {
 </table>
 </div>
 <div class="sect2">
-<h3 id="_解析方法元数据"><a class="anchor" href="#_解析方法元数据"></a>解析方法元数据</h3>
+<h3 id="解析方法元数据"><a class="anchor" href="#解析方法元数据"></a>解析方法元数据</h3>
 <div class="paragraph">
 <p><code>Spring-cloud</code> 继承 <code>Contract.BaseContract</code>，实现处理参数的方法</p>
 </div>
@@ -413,29 +420,29 @@ public &lt;T&gt; T newInstance(Target&lt;T&gt; target) {
 </details>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public Map&lt;String, MethodHandler&gt; apply(Target key) {
-    // 待处理的方法元数据
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">public</span> Map&lt;String, MethodHandler&gt; <span class="hljs-title function_">apply</span><span class="hljs-params">(Target key)</span> {
+    <span class="hljs-comment">// 待处理的方法元数据</span>
     List&lt;MethodMetadata&gt; metadata = contract.parseAndValidatateMetadata(key.type());
-    Map&lt;String, MethodHandler&gt; result = new LinkedHashMap&lt;String, MethodHandler&gt;();
-    // 处理方法元数据
-    for (MethodMetadata md : metadata) {
+    Map&lt;String, MethodHandler&gt; result = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedHashMap</span>&lt;String, MethodHandler&gt;();
+    <span class="hljs-comment">// 处理方法元数据</span>
+    <span class="hljs-keyword">for</span> (MethodMetadata md : metadata) {
         BuildTemplateByResolvingArgs buildTemplate;
-        // form 表单
-        if (!md.formParams().isEmpty() &amp;&amp; md.template().bodyTemplate() == null) {
-            buildTemplate = new BuildFormEncodedTemplateFromArgs(md, encoder, queryMapEncoder);
+        <span class="hljs-comment">// form 表单</span>
+        <span class="hljs-keyword">if</span> (!md.formParams().isEmpty() &amp;&amp; md.template().bodyTemplate() == <span class="hljs-literal">null</span>) {
+            buildTemplate = <span class="hljs-keyword">new</span> <span class="hljs-title class_">BuildFormEncodedTemplateFromArgs</span>(md, encoder, queryMapEncoder);
         }
-        // body
-        else if (md.bodyIndex() != null) {
-            buildTemplate = new BuildEncodedTemplateFromArgs(md, encoder, queryMapEncoder);
+        <span class="hljs-comment">// body</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (md.bodyIndex() != <span class="hljs-literal">null</span>) {
+            buildTemplate = <span class="hljs-keyword">new</span> <span class="hljs-title class_">BuildEncodedTemplateFromArgs</span>(md, encoder, queryMapEncoder);
         }
-        // 其它请求
-        else {
-            buildTemplate = new BuildTemplateByResolvingArgs(md, queryMapEncoder);
+        <span class="hljs-comment">// 其它请求</span>
+        <span class="hljs-keyword">else</span> {
+            buildTemplate = <span class="hljs-keyword">new</span> <span class="hljs-title class_">BuildTemplateByResolvingArgs</span>(md, queryMapEncoder);
         }
         result.put(md.configKey(),
                 factory.create(key, md, buildTemplate, options, decoder, errorDecoder));
     }
-    return result;
+    <span class="hljs-keyword">return</span> result;
 }</code></pre>
 </div>
 </div>
@@ -445,26 +452,26 @@ public &lt;T&gt; T newInstance(Target&lt;T&gt; target) {
 <div class="listingblock">
 <div class="title">feign.Contract.BaseContract#parseAndValidatateMetadata</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
-public List&lt;MethodMetadata&gt; parseAndValidatateMetadata(Class&lt;?&gt; targetType) {
-    //...
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@Override</span>
+<span class="hljs-keyword">public</span> List&lt;MethodMetadata&gt; <span class="hljs-title function_">parseAndValidatateMetadata</span><span class="hljs-params">(Class&lt;?&gt; targetType)</span> {
+    <span class="hljs-comment">//...</span>
 
-    // 解析每个方法
-    Map&lt;String, MethodMetadata&gt; result = new LinkedHashMap&lt;String, MethodMetadata&gt;();
-    for (Method method : targetType.getMethods()) {
-        // 跳过默认方法
-        if (method.getDeclaringClass() == Object.class ||
-                (method.getModifiers() &amp; Modifier.STATIC) != 0 ||
+    <span class="hljs-comment">// 解析每个方法</span>
+    Map&lt;String, MethodMetadata&gt; result = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedHashMap</span>&lt;String, MethodMetadata&gt;();
+    <span class="hljs-keyword">for</span> (Method method : targetType.getMethods()) {
+        <span class="hljs-comment">// 跳过默认方法</span>
+        <span class="hljs-keyword">if</span> (method.getDeclaringClass() == Object.class ||
+                (method.getModifiers() &amp; Modifier.STATIC) != <span class="hljs-number">0</span> ||
                 Util.isDefault(method)) {
-            continue;
+            <span class="hljs-keyword">continue</span>;
         }
-        // 解析方法元数据，进入 SpringMvcContract
-        MethodMetadata metadata = parseAndValidateMetadata(targetType, method);
-        checkState(!result.containsKey(metadata.configKey()), "Overrides unsupported: %s",
+        <span class="hljs-comment">// 解析方法元数据，进入 SpringMvcContract</span>
+        <span class="hljs-type">MethodMetadata</span> <span class="hljs-variable">metadata</span> <span class="hljs-operator">=</span> parseAndValidateMetadata(targetType, method);
+        checkState(!result.containsKey(metadata.configKey()), <span class="hljs-string">&quot;Overrides unsupported: %s&quot;</span>,
                 metadata.configKey());
         result.put(metadata.configKey(), metadata);
     }
-    return new ArrayList&lt;&gt;(result.values());
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;(result.values());
 }</code></pre>
 </div>
 </div>
@@ -474,42 +481,42 @@ public List&lt;MethodMetadata&gt; parseAndValidatateMetadata(Class&lt;?&gt; targ
 <div class="listingblock">
 <div class="title">feign.Contract.BaseContract#parseAndValidateMetadata</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">protected MethodMetadata parseAndValidateMetadata(Class&lt;?&gt; targetType, Method method) {
-    MethodMetadata data = new MethodMetadata();
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">protected</span> MethodMetadata <span class="hljs-title function_">parseAndValidateMetadata</span><span class="hljs-params">(Class&lt;?&gt; targetType, Method method)</span> {
+    <span class="hljs-type">MethodMetadata</span> <span class="hljs-variable">data</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">MethodMetadata</span>();
     data.returnType(Types.resolve(targetType, targetType, method.getGenericReturnType()));
-    // 方法唯一key
+    <span class="hljs-comment">// 方法唯一key</span>
     data.configKey(Feign.configKey(targetType, method));
 
-    // 解析class上注解
-    if (targetType.getInterfaces().length == 1) {
-        processAnnotationOnClass(data, targetType.getInterfaces()[0]);
+    <span class="hljs-comment">// 解析class上注解</span>
+    <span class="hljs-keyword">if</span> (targetType.getInterfaces().length == <span class="hljs-number">1</span>) {
+        processAnnotationOnClass(data, targetType.getInterfaces()[<span class="hljs-number">0</span>]);
     }
     processAnnotationOnClass(data, targetType);
 
 
-    // 解析method上注解
-    for (Annotation methodAnnotation : method.getAnnotations()) {
+    <span class="hljs-comment">// 解析method上注解</span>
+    <span class="hljs-keyword">for</span> (Annotation methodAnnotation : method.getAnnotations()) {
         processAnnotationOnMethod(data, methodAnnotation, method);
     }
     Class&lt;?&gt;[] parameterTypes = method.getParameterTypes();
     Type[] genericParameterTypes = method.getGenericParameterTypes();
 
-    // 解析参数
+    <span class="hljs-comment">// 解析参数</span>
     Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-    int count = parameterAnnotations.length;
-    for (int i = 0; i &lt; count; i++) {
-        boolean isHttpAnnotation = false;
-        if (parameterAnnotations[i] != null) {
+    <span class="hljs-type">int</span> <span class="hljs-variable">count</span> <span class="hljs-operator">=</span> parameterAnnotations.length;
+    <span class="hljs-keyword">for</span> (<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; count; i++) {
+        <span class="hljs-type">boolean</span> <span class="hljs-variable">isHttpAnnotation</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;
+        <span class="hljs-keyword">if</span> (parameterAnnotations[i] != <span class="hljs-literal">null</span>) {
             isHttpAnnotation = processAnnotationsOnParameter(data, parameterAnnotations[i], i);
         }
-        if (parameterTypes[i] == URI.class) {
+        <span class="hljs-keyword">if</span> (parameterTypes[i] == URI.class) {
             data.urlIndex(i);
-        } else if (!isHttpAnnotation &amp;&amp; parameterTypes[i] != Request.Options.class) {
+        } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (!isHttpAnnotation &amp;&amp; parameterTypes[i] != Request.Options.class) {
             data.bodyIndex(i);
             data.bodyType(Types.resolve(targetType, targetType, genericParameterTypes[i]));
         }
     }
-    return data;
+    <span class="hljs-keyword">return</span> data;
 }</code></pre>
 </div>
 </div>
@@ -517,93 +524,93 @@ public List&lt;MethodMetadata&gt; parseAndValidatateMetadata(Class&lt;?&gt; targ
 </div>
 </div>
 <div class="sect1">
-<h2 id="_发起请求"><a class="anchor" href="#_发起请求"></a>发起请求</h2>
+<h2 id="发起请求"><a class="anchor" href="#发起请求"></a>发起请求</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_不同方法的路由"><a class="anchor" href="#_不同方法的路由"></a>不同方法的路由</h3>
+<h3 id="不同方法的路由"><a class="anchor" href="#不同方法的路由"></a>不同方法的路由</h3>
 <div class="paragraph">
 <p><code>MethodHandler</code> 有两个实现，<code>DefaultMethodHandler</code> 和 <code>SynchronousMethodHandler</code>。 默认方法走 <code>DefaultMethodHandler</code> ，其它方法走 <code>SynchronousMethodHandler</code>。</p>
 </div>
 <div class="listingblock">
 <div class="title">feign.ReflectiveFeign.FeignInvocationHandler#invoke</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
-public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-    // 自定义equals、hashCode和toString方法的处理
-    if ("equals".equals(method.getName())) {
-        try {
-            Object otherHandler =
-                    args.length &gt; 0 &amp;&amp; args[0] != null ? Proxy.getInvocationHandler(args[0]) : null;
-            return equals(otherHandler);
-        } catch (IllegalArgumentException e) {
-            return false;
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@Override</span>
+<span class="hljs-keyword">public</span> Object <span class="hljs-title function_">invoke</span><span class="hljs-params">(Object proxy, Method method, Object[] args)</span> <span class="hljs-keyword">throws</span> Throwable {
+    <span class="hljs-comment">// 自定义equals、hashCode和toString方法的处理</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;equals&quot;</span>.equals(method.getName())) {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-type">Object</span> <span class="hljs-variable">otherHandler</span> <span class="hljs-operator">=</span>
+                    args.length &gt; <span class="hljs-number">0</span> &amp;&amp; args[<span class="hljs-number">0</span>] != <span class="hljs-literal">null</span> ? Proxy.getInvocationHandler(args[<span class="hljs-number">0</span>]) : <span class="hljs-literal">null</span>;
+            <span class="hljs-keyword">return</span> equals(otherHandler);
+        } <span class="hljs-keyword">catch</span> (IllegalArgumentException e) {
+            <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
         }
-    } else if ("hashCode".equals(method.getName())) {
-        return hashCode();
-    } else if ("toString".equals(method.getName())) {
-        return toString();
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;hashCode&quot;</span>.equals(method.getName())) {
+        <span class="hljs-keyword">return</span> hashCode();
+    } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-string">&quot;toString&quot;</span>.equals(method.getName())) {
+        <span class="hljs-keyword">return</span> toString();
     }
 
-    // dispatch 就是 newInstance 方法中的 methodToHandler
-    return dispatch.get(method).invoke(args);
+    <span class="hljs-comment">// dispatch 就是 newInstance 方法中的 methodToHandler</span>
+    <span class="hljs-keyword">return</span> dispatch.get(method).invoke(args);
 }</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_defaultmethodhandler"><a class="anchor" href="#_defaultmethodhandler"></a><code>DefaultMethodHandler</code></h4>
+<h4 id="defaultmethodhandler"><a class="anchor" href="#defaultmethodhandler"></a><code>DefaultMethodHandler</code></h4>
 <div class="paragraph">
 <p>执行代理接口自己的方法。</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
-public Object invoke(Object[] argv) throws Throwable {
-    if (handle == null) {
-        throw new IllegalStateException(
-                "Default method handler invoked before proxy has been bound.");
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@Override</span>
+<span class="hljs-keyword">public</span> Object <span class="hljs-title function_">invoke</span><span class="hljs-params">(Object[] argv)</span> <span class="hljs-keyword">throws</span> Throwable {
+    <span class="hljs-keyword">if</span> (handle == <span class="hljs-literal">null</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IllegalStateException</span>(
+                <span class="hljs-string">&quot;Default method handler invoked before proxy has been bound.&quot;</span>);
     }
-    return handle.invokeWithArguments(argv);
+    <span class="hljs-keyword">return</span> handle.invokeWithArguments(argv);
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_synchronousmethodhandler"><a class="anchor" href="#_synchronousmethodhandler"></a><code>SynchronousMethodHandler</code></h4>
+<h4 id="synchronousmethodhandler"><a class="anchor" href="#synchronousmethodhandler"></a><code>SynchronousMethodHandler</code></h4>
 <div class="paragraph">
 <p>定义了发起 HTTP 请求的方法</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
-public Object invoke(Object[] argv) throws Throwable {
-    // RequestTemplate 定义了完整的HTTP请求信息
-    RequestTemplate template = buildTemplateFromArgs.create(argv);
-    // Options 定义了连接超时时间、请求超时时间、是否允许重定向
-    Options options = findOptions(argv);
-    // 重试设置
-    Retryer retryer = this.retryer.clone();
-    // 成功返回，失败抛异常
-    while (true) {
-        try {
-            // 执行和解码
-            return executeAndDecode(template, options);
-        } catch (RetryableException e) {
-            try {
-                // 判断是否继续重试
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@Override</span>
+<span class="hljs-keyword">public</span> Object <span class="hljs-title function_">invoke</span><span class="hljs-params">(Object[] argv)</span> <span class="hljs-keyword">throws</span> Throwable {
+    <span class="hljs-comment">// RequestTemplate 定义了完整的HTTP请求信息</span>
+    <span class="hljs-type">RequestTemplate</span> <span class="hljs-variable">template</span> <span class="hljs-operator">=</span> buildTemplateFromArgs.create(argv);
+    <span class="hljs-comment">// Options 定义了连接超时时间、请求超时时间、是否允许重定向</span>
+    <span class="hljs-type">Options</span> <span class="hljs-variable">options</span> <span class="hljs-operator">=</span> findOptions(argv);
+    <span class="hljs-comment">// 重试设置</span>
+    <span class="hljs-type">Retryer</span> <span class="hljs-variable">retryer</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.retryer.clone();
+    <span class="hljs-comment">// 成功返回，失败抛异常</span>
+    <span class="hljs-keyword">while</span> (<span class="hljs-literal">true</span>) {
+        <span class="hljs-keyword">try</span> {
+            <span class="hljs-comment">// 执行和解码</span>
+            <span class="hljs-keyword">return</span> executeAndDecode(template, options);
+        } <span class="hljs-keyword">catch</span> (RetryableException e) {
+            <span class="hljs-keyword">try</span> {
+                <span class="hljs-comment">// 判断是否继续重试</span>
                 retryer.continueOrPropagate(e);
-            } catch (RetryableException th) {
-                Throwable cause = th.getCause();
-                if (propagationPolicy == UNWRAP &amp;&amp; cause != null) {
-                    throw cause;
-                } else {
-                    throw th;
+            } <span class="hljs-keyword">catch</span> (RetryableException th) {
+                <span class="hljs-type">Throwable</span> <span class="hljs-variable">cause</span> <span class="hljs-operator">=</span> th.getCause();
+                <span class="hljs-keyword">if</span> (propagationPolicy == UNWRAP &amp;&amp; cause != <span class="hljs-literal">null</span>) {
+                    <span class="hljs-keyword">throw</span> cause;
+                } <span class="hljs-keyword">else</span> {
+                    <span class="hljs-keyword">throw</span> th;
                 }
             }
-            if (logLevel != Logger.Level.NONE) {
+            <span class="hljs-keyword">if</span> (logLevel != Logger.Level.NONE) {
                 logger.logRetry(metadata.configKey(), logLevel);
             }
-            // 重试
-            continue;
+            <span class="hljs-comment">// 重试</span>
+            <span class="hljs-keyword">continue</span>;
         }
     }
 }</code></pre>
@@ -612,84 +619,84 @@ public Object invoke(Object[] argv) throws Throwable {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_发起请求和解析响应"><a class="anchor" href="#_发起请求和解析响应"></a>发起请求和解析响应</h3>
+<h3 id="发起请求和解析响应"><a class="anchor" href="#发起请求和解析响应"></a>发起请求和解析响应</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Object executeAndDecode(RequestTemplate template, Options options) throws Throwable {
-    // RequestTemplate 转换为 Request
-    Request request = targetRequest(template);
+<pre class="highlight"><code class="language-java" data-lang="java">Object <span class="hljs-title function_">executeAndDecode</span><span class="hljs-params">(RequestTemplate template, Options options)</span> <span class="hljs-keyword">throws</span> Throwable {
+    <span class="hljs-comment">// RequestTemplate 转换为 Request</span>
+    <span class="hljs-type">Request</span> <span class="hljs-variable">request</span> <span class="hljs-operator">=</span> targetRequest(template);
 
-    // 打印请求参数
-    if (logLevel != Logger.Level.NONE) {
+    <span class="hljs-comment">// 打印请求参数</span>
+    <span class="hljs-keyword">if</span> (logLevel != Logger.Level.NONE) {
         logger.logRequest(metadata.configKey(), logLevel, request);
     }
 
-    // 打印接口响应时间
+    <span class="hljs-comment">// 打印接口响应时间</span>
     Response response;
-    long start = System.nanoTime();
-    try {
-        // 发起请求
+    <span class="hljs-type">long</span> <span class="hljs-variable">start</span> <span class="hljs-operator">=</span> System.nanoTime();
+    <span class="hljs-keyword">try</span> {
+        <span class="hljs-comment">// 发起请求</span>
         response = client.execute(request, options);
-    } catch (IOException e) {
-        if (logLevel != Logger.Level.NONE) {
+    } <span class="hljs-keyword">catch</span> (IOException e) {
+        <span class="hljs-keyword">if</span> (logLevel != Logger.Level.NONE) {
             logger.logIOException(metadata.configKey(), logLevel, e, elapsedTime(start));
         }
-        // 抛出重试异常 RetryableException()
-        throw errorExecuting(request, e);
+        <span class="hljs-comment">// 抛出重试异常 RetryableException()</span>
+        <span class="hljs-keyword">throw</span> errorExecuting(request, e);
     }
-    long elapsedTime = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
+    <span class="hljs-type">long</span> <span class="hljs-variable">elapsedTime</span> <span class="hljs-operator">=</span> TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - start);
 
-    boolean shouldClose = true;
-    try {
-        if (logLevel != Logger.Level.NONE) {
+    <span class="hljs-type">boolean</span> <span class="hljs-variable">shouldClose</span> <span class="hljs-operator">=</span> <span class="hljs-literal">true</span>;
+    <span class="hljs-keyword">try</span> {
+        <span class="hljs-keyword">if</span> (logLevel != Logger.Level.NONE) {
             response =
                     logger.logAndRebufferResponse(metadata.configKey(), logLevel, response, elapsedTime);
         }
-        if (Response.class == metadata.returnType()) {
-            if (response.body() == null) {
-                return response;
+        <span class="hljs-keyword">if</span> (Response.class == metadata.returnType()) {
+            <span class="hljs-keyword">if</span> (response.body() == <span class="hljs-literal">null</span>) {
+                <span class="hljs-keyword">return</span> response;
             }
-            if (response.body().length() == null ||
+            <span class="hljs-keyword">if</span> (response.body().length() == <span class="hljs-literal">null</span> ||
                     response.body().length() &gt; MAX_RESPONSE_BUFFER_SIZE) {
-                shouldClose = false;
-                return response;
+                shouldClose = <span class="hljs-literal">false</span>;
+                <span class="hljs-keyword">return</span> response;
             }
-            // Ensure the response body is disconnected
-            // 读取body字节数组，返回response
-            byte[] bodyData = Util.toByteArray(response.body().asInputStream());
-            return response.toBuilder().body(bodyData).build();
+            <span class="hljs-comment">// Ensure the response body is disconnected</span>
+            <span class="hljs-comment">// 读取body字节数组，返回response</span>
+            <span class="hljs-type">byte</span>[] bodyData = Util.toByteArray(response.body().asInputStream());
+            <span class="hljs-keyword">return</span> response.toBuilder().body(bodyData).build();
         }
-        // 处理 2XX
-        if (response.status() &gt;= 200 &amp;&amp; response.status() &lt; 300) {
-            // 接口返回void
-            if (void.class == metadata.returnType()) {
-                return null;
+        <span class="hljs-comment">// 处理 2XX</span>
+        <span class="hljs-keyword">if</span> (response.status() &gt;= <span class="hljs-number">200</span> &amp;&amp; response.status() &lt; <span class="hljs-number">300</span>) {
+            <span class="hljs-comment">// 接口返回void</span>
+            <span class="hljs-keyword">if</span> (<span class="hljs-keyword">void</span>.class == metadata.returnType()) {
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
             }
-            // 解码response，直接调用decoder解码
-            else {
-                Object result = decode(response);
+            <span class="hljs-comment">// 解码response，直接调用decoder解码</span>
+            <span class="hljs-keyword">else</span> {
+                <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> decode(response);
                 shouldClose = closeAfterDecode;
-                return result;
+                <span class="hljs-keyword">return</span> result;
             }
         }
-        // 处理 404
-        else if (decode404 &amp;&amp; response.status() == 404 &amp;&amp; void.class != metadata.returnType()) {
-            Object result = decode(response);
+        <span class="hljs-comment">// 处理 404</span>
+        <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (decode404 &amp;&amp; response.status() == <span class="hljs-number">404</span> &amp;&amp; <span class="hljs-keyword">void</span>.class != metadata.returnType()) {
+            <span class="hljs-type">Object</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> decode(response);
             shouldClose = closeAfterDecode;
-            return result;
+            <span class="hljs-keyword">return</span> result;
         }
-        // 其他返回码，使用errorDecoder解析，抛出异常
-        else {
-            throw errorDecoder.decode(metadata.configKey(), response);
+        <span class="hljs-comment">// 其他返回码，使用errorDecoder解析，抛出异常</span>
+        <span class="hljs-keyword">else</span> {
+            <span class="hljs-keyword">throw</span> errorDecoder.decode(metadata.configKey(), response);
         }
-    } catch (IOException e) {
-        if (logLevel != Logger.Level.NONE) {
+    } <span class="hljs-keyword">catch</span> (IOException e) {
+        <span class="hljs-keyword">if</span> (logLevel != Logger.Level.NONE) {
             logger.logIOException(metadata.configKey(), logLevel, e, elapsedTime);
         }
-        throw errorReading(request, response, e);
-    } finally {
-        if (shouldClose) {
-            // 关流
+        <span class="hljs-keyword">throw</span> errorReading(request, response, e);
+    } <span class="hljs-keyword">finally</span> {
+        <span class="hljs-keyword">if</span> (shouldClose) {
+            <span class="hljs-comment">// 关流</span>
             ensureClosed(response.body());
         }
     }
@@ -698,9 +705,9 @@ public Object invoke(Object[] argv) throws Throwable {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_发送http请求"><a class="anchor" href="#_发送http请求"></a>发送HTTP请求</h3>
+<h3 id="发送http请求"><a class="anchor" href="#发送http请求"></a>发送HTTP请求</h3>
 <div class="paragraph">
-<p><code>client</code> 是一个 <code>Client</code> 接口，默认实现类是`Client.Default`，使用 <code>java.net.HttpURLConnection</code> 发送 <code>HTTP</code> 请求。</p>
+<p><code>client</code> 是一个 <code>Client</code> 接口，默认实现类是 <code>Client.Default</code>， 使用 <code>java.net.HttpURLConnection</code> 发送 <code>HTTP</code> 请求。</p>
 </div>
 <div class="paragraph">
 <p>feign还实现了：</p>
@@ -723,10 +730,10 @@ public Object invoke(Object[] argv) throws Throwable {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
-public Response execute(Request request, Options options) throws IOException {
-    HttpURLConnection connection = convertAndSend(request, options); <i class="conum" data-value="1"></i><b>(1)</b>
-    return convertResponse(connection, request); <i class="conum" data-value="2"></i><b>(2)</b>
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@Override</span>
+<span class="hljs-keyword">public</span> Response <span class="hljs-title function_">execute</span><span class="hljs-params">(Request request, Options options)</span> <span class="hljs-keyword">throws</span> IOException {
+    <span class="hljs-type">HttpURLConnection</span> <span class="hljs-variable">connection</span> <span class="hljs-operator">=</span> convertAndSend(request, options); <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="hljs-keyword">return</span> convertResponse(connection, request); <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
@@ -743,58 +750,58 @@ public Response execute(Request request, Options options) throws IOException {
 </table>
 </div>
 <div class="sect3">
-<h4 id="_发送请求"><a class="anchor" href="#_发送请求"></a>发送请求</h4>
+<h4 id="发送请求"><a class="anchor" href="#发送请求"></a>发送请求</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">HttpURLConnection convertAndSend(Request request, Options options) throws IOException {
-    final URL url = new URL(request.url());
-    // 获取 conniption
-    final HttpURLConnection connection = this.getConnection(url);
-    //...
+<pre class="highlight"><code class="language-java" data-lang="java">HttpURLConnection <span class="hljs-title function_">convertAndSend</span><span class="hljs-params">(Request request, Options options)</span> <span class="hljs-keyword">throws</span> IOException {
+    <span class="hljs-keyword">final</span> <span class="hljs-type">URL</span> <span class="hljs-variable">url</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">URL</span>(request.url());
+    <span class="hljs-comment">// 获取 conniption</span>
+    <span class="hljs-keyword">final</span> <span class="hljs-type">HttpURLConnection</span> <span class="hljs-variable">connection</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.getConnection(url);
+    <span class="hljs-comment">//...</span>
 
     connection.setConnectTimeout(options.connectTimeoutMillis());
     connection.setReadTimeout(options.readTimeoutMillis());
-    connection.setAllowUserInteraction(false);
+    connection.setAllowUserInteraction(<span class="hljs-literal">false</span>);
     connection.setInstanceFollowRedirects(options.isFollowRedirects());
     connection.setRequestMethod(request.httpMethod().name());
 
-    //..
+    <span class="hljs-comment">//..</span>
 }</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_解析响应"><a class="anchor" href="#_解析响应"></a>解析响应</h4>
+<h4 id="解析响应"><a class="anchor" href="#解析响应"></a>解析响应</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Response convertResponse(HttpURLConnection connection, Request request) throws IOException {
-    int status = connection.getResponseCode();
-    String reason = connection.getResponseMessage();
+<pre class="highlight"><code class="language-java" data-lang="java">Response <span class="hljs-title function_">convertResponse</span><span class="hljs-params">(HttpURLConnection connection, Request request)</span> <span class="hljs-keyword">throws</span> IOException {
+    <span class="hljs-type">int</span> <span class="hljs-variable">status</span> <span class="hljs-operator">=</span> connection.getResponseCode();
+    <span class="hljs-type">String</span> <span class="hljs-variable">reason</span> <span class="hljs-operator">=</span> connection.getResponseMessage();
 
-    if (status &lt; 0) {
-        throw new IOException(format("Invalid status(%s) executing %s %s", status,
+    <span class="hljs-keyword">if</span> (status &lt; <span class="hljs-number">0</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">IOException</span>(format(<span class="hljs-string">&quot;Invalid status(%s) executing %s %s&quot;</span>, status,
                 connection.getRequestMethod(), connection.getURL()));
     }
 
-    Map&lt;String, Collection&lt;String&gt;&gt; headers = new LinkedHashMap&lt;&gt;();
-    for (Map.Entry&lt;String, List&lt;String&gt;&gt; field : connection.getHeaderFields().entrySet()) {
-        // response message
-        if (field.getKey() != null) {
+    Map&lt;String, Collection&lt;String&gt;&gt; headers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedHashMap</span>&lt;&gt;();
+    <span class="hljs-keyword">for</span> (Map.Entry&lt;String, List&lt;String&gt;&gt; field : connection.getHeaderFields().entrySet()) {
+        <span class="hljs-comment">// response message</span>
+        <span class="hljs-keyword">if</span> (field.getKey() != <span class="hljs-literal">null</span>) {
             headers.put(field.getKey(), field.getValue());
         }
     }
 
-    Integer length = connection.getContentLength();
-    if (length == -1) {
-        length = null;
+    <span class="hljs-type">Integer</span> <span class="hljs-variable">length</span> <span class="hljs-operator">=</span> connection.getContentLength();
+    <span class="hljs-keyword">if</span> (length == -<span class="hljs-number">1</span>) {
+        length = <span class="hljs-literal">null</span>;
     }
     InputStream stream;
-    if (status &gt;= 400) {
+    <span class="hljs-keyword">if</span> (status &gt;= <span class="hljs-number">400</span>) {
         stream = connection.getErrorStream();
-    } else {
+    } <span class="hljs-keyword">else</span> {
         stream = connection.getInputStream();
     }
-    return Response.builder()
+    <span class="hljs-keyword">return</span> Response.builder()
             .status(status)
             .reason(reason)
             .headers(headers)
@@ -808,15 +815,23 @@ public Response execute(Request request, Options options) throws IOException {
 </div>
 </div>
 </div>
+<nav class="pagination">
+  <span class="prev"><a href="feign-component.html">Feign 的组成</a></span>
+  <span class="next"><a href="../spring-cloud-open-feign/spring-feign-integrations.html">Spring 整合 Feign 原理</a></span>
+</nav>
 </article>
   </div>
 </main>
 </div>
-<footer class="footer">
+<!--<footer class="footer">
   <p>This page was built using the Antora default UI.</p>
   <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
 </footer>
+-->
 <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
 <script async src="../../_/js/vendor/highlight.js"></script>
+<script src="../../_/js/vendor/lunr.js"></script>
+<script src="../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../.." data-snippet-length="100" data-stylesheet="../../_/css/search.css"></script>
+<script async src="../../search-index.js"></script>
   </body>
 </html>

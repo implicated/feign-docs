@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>SpringMVC 注解支持原理 :: Implicated</title>
     <link rel="canonical" href="https://docs.implicated.com/open-feign/spring-cloud-open-feign/spring-mvc-support.html">
+    <link rel="prev" href="spring-feign-integrations.html">
+    <link rel="next" href="spring-feign-configuration.html">
     <meta name="generator" content="Antora 3.1.2">
     <link rel="stylesheet" href="../../_/css/site.css">
     <script>var uiRootPath = '../../_'</script>
@@ -14,6 +16,11 @@
   <nav class="navbar">
     <div class="navbar-brand">
       <a class="navbar-item" href="https://docs.implicated.com">Implicated</a>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <input id="search-input" type="text" placeholder="Search the docs">
+        </div>
+      </div>
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
         <span></span>
@@ -149,74 +156,82 @@
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class SpringMvcContract extends Contract.BaseContract implements ResourceLoaderAware {
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">SpringMvcContract</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">Contract</span>.BaseContract <span class="hljs-keyword">implements</span> <span class="hljs-title class_">ResourceLoaderAware</span> {
 
-    public SpringMvcContract(List&lt;AnnotatedParameterProcessor&gt; annotatedParameterProcessors, ConversionService conversionService) {
+    <span class="hljs-keyword">public</span> <span class="hljs-title function_">SpringMvcContract</span><span class="hljs-params">(List&lt;AnnotatedParameterProcessor&gt; annotatedParameterProcessors, ConversionService conversionService)</span> {
         Assert.notNull(annotatedParameterProcessors,
-                "Parameter processors can not be null.");
-        Assert.notNull(conversionService, "ConversionService can not be null.");
+                <span class="hljs-string">&quot;Parameter processors can not be null.&quot;</span>);
+        Assert.notNull(conversionService, <span class="hljs-string">&quot;ConversionService can not be null.&quot;</span>);
 
         List&lt;AnnotatedParameterProcessor&gt; processors;
-        if (!annotatedParameterProcessors.isEmpty()) {
-            processors = new ArrayList&lt;&gt;(annotatedParameterProcessors);
+        <span class="hljs-keyword">if</span> (!annotatedParameterProcessors.isEmpty()) {
+            processors = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;(annotatedParameterProcessors);
         }
-        else {
+        <span class="hljs-keyword">else</span> {
             processors = getDefaultAnnotatedArgumentsProcessors();
         }
-        this.annotatedArgumentProcessors = toAnnotatedArgumentProcessorMap(processors);
-        this.conversionService = conversionService;
-        this.convertingExpanderFactory = new ConvertingExpanderFactory(conversionService);
+        <span class="hljs-built_in">this</span>.annotatedArgumentProcessors = toAnnotatedArgumentProcessorMap(processors);
+        <span class="hljs-built_in">this</span>.conversionService = conversionService;
+        <span class="hljs-built_in">this</span>.convertingExpanderFactory = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ConvertingExpanderFactory</span>(conversionService);
     }
 
-    private List&lt;AnnotatedParameterProcessor&gt; getDefaultAnnotatedArgumentsProcessors() {
-        List&lt;AnnotatedParameterProcessor&gt; annotatedArgumentResolvers = new ArrayList&lt;&gt;();
+    <span class="hljs-keyword">private</span> List&lt;AnnotatedParameterProcessor&gt; <span class="hljs-title function_">getDefaultAnnotatedArgumentsProcessors</span><span class="hljs-params">()</span> {
+        List&lt;AnnotatedParameterProcessor&gt; annotatedArgumentResolvers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ArrayList</span>&lt;&gt;();
 
-        // 具体实现
-        annotatedArgumentResolvers.add(new PathVariableParameterProcessor());
-        annotatedArgumentResolvers.add(new RequestParamParameterProcessor());
-        annotatedArgumentResolvers.add(new RequestHeaderParameterProcessor());
-        annotatedArgumentResolvers.add(new QueryMapParameterProcessor());
+        <span class="hljs-comment">// 具体实现</span>
+        annotatedArgumentResolvers.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">PathVariableParameterProcessor</span>());
+        annotatedArgumentResolvers.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">RequestParamParameterProcessor</span>());
+        annotatedArgumentResolvers.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">RequestHeaderParameterProcessor</span>());
+        annotatedArgumentResolvers.add(<span class="hljs-keyword">new</span> <span class="hljs-title class_">QueryMapParameterProcessor</span>());
 
-        return annotatedArgumentResolvers;
+        <span class="hljs-keyword">return</span> annotatedArgumentResolvers;
     }
 
-    // 解析方法元数据，方法中会调用下面三个方法
-    @Override
-    public MethodMetadata parseAndValidateMetadata(Class&lt;?&gt; targetType, Method method) {
-        //...
+    <span class="hljs-comment">// 解析方法元数据，方法中会调用下面三个方法</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> MethodMetadata <span class="hljs-title function_">parseAndValidateMetadata</span><span class="hljs-params">(Class&lt;?&gt; targetType, Method method)</span> {
+        <span class="hljs-comment">//...</span>
     }
 
-    // 解析class上注解
-    @Override
-    protected void processAnnotationOnClass(MethodMetadata data, Class&lt;?&gt; clz) {
-        //...
+    <span class="hljs-comment">// 解析class上注解</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">processAnnotationOnClass</span><span class="hljs-params">(MethodMetadata data, Class&lt;?&gt; clz)</span> {
+        <span class="hljs-comment">//...</span>
     }
 
-    // 解析method上注解
-    @Override
-    protected void processAnnotationOnMethod(MethodMetadata data, Annotation methodAnnotation, Method method) {
-        //...
+    <span class="hljs-comment">// 解析method上注解</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">processAnnotationOnMethod</span><span class="hljs-params">(MethodMetadata data, Annotation methodAnnotation, Method method)</span> {
+        <span class="hljs-comment">//...</span>
     }
 
-    // 解析参数
-    @Override
-    protected boolean processAnnotationsOnParameter(MethodMetadata data, Annotation[] annotations, int paramIndex) {
-        //...
+    <span class="hljs-comment">// 解析参数</span>
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">protected</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">processAnnotationsOnParameter</span><span class="hljs-params">(MethodMetadata data, Annotation[] annotations, <span class="hljs-type">int</span> paramIndex)</span> {
+        <span class="hljs-comment">//...</span>
     }
 
-    //...
+    <span class="hljs-comment">//...</span>
 }</code></pre>
 </div>
 </div>
+<nav class="pagination">
+  <span class="prev"><a href="spring-feign-integrations.html">Spring 整合 Feign 原理</a></span>
+  <span class="next"><a href="spring-feign-configuration.html">Spring Cloud Open Feign 配置项</a></span>
+</nav>
 </article>
   </div>
 </main>
 </div>
-<footer class="footer">
+<!--<footer class="footer">
   <p>This page was built using the Antora default UI.</p>
   <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
 </footer>
+-->
 <script id="site-script" src="../../_/js/site.js" data-ui-root-path="../../_"></script>
 <script async src="../../_/js/vendor/highlight.js"></script>
+<script src="../../_/js/vendor/lunr.js"></script>
+<script src="../../_/js/search-ui.js" id="search-ui-script" data-site-root-path="../.." data-snippet-length="100" data-stylesheet="../../_/css/search.css"></script>
+<script async src="../../search-index.js"></script>
   </body>
 </html>

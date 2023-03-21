@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Open Feign 的性能优化 :: Implicated</title>
     <link rel="canonical" href="https://docs.implicated.com/open-feign/optimize.html">
+    <link rel="prev" href="spring-cloud-open-feign/spring-feign-configuration.html">
+    <link rel="next" href="future.html">
     <meta name="generator" content="Antora 3.1.2">
     <link rel="stylesheet" href="../_/css/site.css">
     <script>var uiRootPath = '../_'</script>
@@ -14,6 +16,11 @@
   <nav class="navbar">
     <div class="navbar-brand">
       <a class="navbar-item" href="https://docs.implicated.com">Implicated</a>
+      <div class="navbar-item search hide-for-print">
+        <div id="search-field" class="field">
+          <input id="search-input" type="text" placeholder="Search the docs">
+        </div>
+      </div>
       <button class="navbar-burger" data-target="topbar-nav">
         <span></span>
         <span></span>
@@ -144,7 +151,7 @@
 <article class="doc">
 <h1 class="page">Open Feign 的性能优化</h1>
 <div class="sect1">
-<h2 id="_设置日志级别"><a class="anchor" href="#_设置日志级别"></a>设置日志级别</h2>
+<h2 id="设置日志级别"><a class="anchor" href="#设置日志级别"></a>设置日志级别</h2>
 <div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -189,7 +196,7 @@
 <div class="listingblock">
 <div class="title">feign.SynchronousMethodHandler#executeAndDecode</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">if (logLevel != Logger.Level.NONE) {
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">if</span> (logLevel != Logger.Level.NONE) {
     logger.logRequest(metadata.configKey(), logLevel, request);
 }</code></pre>
 </div>
@@ -197,10 +204,10 @@
 <div class="listingblock">
 <div class="title">feign.slf4j.Slf4jLogger#logRequest</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Override
-protected void logRequest(String configKey, Level logLevel, Request request) {
-    if (logger.isDebugEnabled()) {
-      super.logRequest(configKey, logLevel, request);
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@Override</span>
+<span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">logRequest</span><span class="hljs-params">(String configKey, Level logLevel, Request request)</span> {
+    <span class="hljs-keyword">if</span> (logger.isDebugEnabled()) {
+      <span class="hljs-built_in">super</span>.logRequest(configKey, logLevel, request);
     }
 }</code></pre>
 </div>
@@ -212,10 +219,10 @@ protected void logRequest(String configKey, Level logLevel, Request request) {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_设置请求响应压缩"><a class="anchor" href="#_设置请求响应压缩"></a>设置请求/响应压缩</h2>
+<h2 id="设置请求响应压缩"><a class="anchor" href="#设置请求响应压缩"></a>设置请求/响应压缩</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_概述"><a class="anchor" href="#_概述"></a>概述</h3>
+<h3 id="概述"><a class="anchor" href="#概述"></a>概述</h3>
 <div class="paragraph">
 <p><code>gzip</code> 是一种数据格式，采用 <code>deflate</code> 算法压缩数据`，gzip` 是一种流行的文件压缩算法，应用十分广泛，尤其是在 Linux 平台。</p>
 </div>
@@ -227,7 +234,7 @@ protected void logRequest(String configKey, Level logLevel, Request request) {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_http协议中关于压缩传输的规定"><a class="anchor" href="#_http协议中关于压缩传输的规定"></a>HTTP协议中关于压缩传输的规定</h3>
+<h3 id="http协议中关于压缩传输的规定"><a class="anchor" href="#http协议中关于压缩传输的规定"></a>HTTP协议中关于压缩传输的规定</h3>
 <div class="paragraph">
 <p>客户端向服务器请求中带有：<code>Accept-Encoding:gzip，deflate</code> 字段，向服务器表示客户端支持的压缩格式（<code>gzip</code> 或者 <code>deflate</code>），如果不发送该消息头，服务端默认是不会压缩的。</p>
 </div>
@@ -239,94 +246,94 @@ protected void logRequest(String configKey, Level logLevel, Request request) {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_配置"><a class="anchor" href="#_配置"></a>配置</h3>
+<h3 id="配置"><a class="anchor" href="#配置"></a>配置</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">feign:
-  compression:
-    request:
-      enabled: true
-      mime-types: text/xml,application/xml,application/json
-      min-request-size: 2048
-    response:
-      enabled: true</code></pre>
+<pre class="highlight"><code class="language-yaml" data-lang="yaml"><span class="hljs-attr">feign:</span>
+  <span class="hljs-attr">compression:</span>
+    <span class="hljs-attr">request:</span>
+      <span class="hljs-attr">enabled:</span> <span class="hljs-literal">true</span>
+      <span class="hljs-attr">mime-types:</span> <span class="hljs-string">text/xml,application/xml,application/json</span>
+      <span class="hljs-attr">min-request-size:</span> <span class="hljs-number">2048</span>
+    <span class="hljs-attr">response:</span>
+      <span class="hljs-attr">enabled:</span> <span class="hljs-literal">true</span></code></pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_替换默认的http实现"><a class="anchor" href="#_替换默认的http实现"></a>替换默认的HTTP实现</h2>
+<h2 id="替换默认的http实现"><a class="anchor" href="#替换默认的http实现"></a>替换默认的HTTP实现</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_apache_httpclient"><a class="anchor" href="#_apache_httpclient"></a><a href="https://hc.apache.org/httpcomponents-client-5.2.x/index.html">Apache HttpClient</a></h3>
+<h3 id="apache-httpclient"><a class="anchor" href="#apache-httpclient"></a><a href="https://hc.apache.org/httpcomponents-client-5.2.x/index.html">Apache HttpClient</a></h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;io.github.openfeign&lt;/groupId&gt;
-    &lt;artifactId&gt;feign-httpclient&lt;/artifactId&gt;
-    &lt;version&gt;${openfeign.version}&lt;/version&gt;
-&lt;/dependency&gt;</code></pre>
+<pre class="highlight"><code class="language-xml" data-lang="xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>io.github.openfeign<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>feign-httpclient<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>${openfeign.version}<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span></code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">feign:
-  httpclient:
-    max-connections: 200
-    max-connections-per-route: 50</code></pre>
+<pre class="highlight"><code class="language-yml" data-lang="yml"><span class="hljs-attr">feign:</span>
+  <span class="hljs-attr">httpclient:</span>
+    <span class="hljs-attr">max-connections:</span> <span class="hljs-number">200</span>
+    <span class="hljs-attr">max-connections-per-route:</span> <span class="hljs-number">50</span></code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_okhttp"><a class="anchor" href="#_okhttp"></a><a href="https://square.github.io/okhttp/">OkHttp</a></h3>
+<h3 id="okhttp"><a class="anchor" href="#okhttp"></a><a href="https://square.github.io/okhttp/">OkHttp</a></h3>
 <div class="paragraph">
 <p><a href="https://segmentfault.com/a/1190000038840773">性能最好</a>。</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;io.github.openfeign&lt;/groupId&gt;
-    &lt;artifactId&gt;feign-okhttp&lt;/artifactId&gt;
-    &lt;version&gt;${openfeign.version}&lt;/version&gt;
-&lt;/dependency&gt;</code></pre>
+<pre class="highlight"><code class="language-xml" data-lang="xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>io.github.openfeign<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>feign-okhttp<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>${openfeign.version}<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span></code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yml hljs" data-lang="yml">feign:
-  httpclient:
-    max-connections: 200
-    max-connections-per-route: 50
-  okhttp:
-    enable: true</code></pre>
+<pre class="highlight"><code class="language-yml" data-lang="yml"><span class="hljs-attr">feign:</span>
+  <span class="hljs-attr">httpclient:</span>
+    <span class="hljs-attr">max-connections:</span> <span class="hljs-number">200</span>
+    <span class="hljs-attr">max-connections-per-route:</span> <span class="hljs-number">50</span>
+  <span class="hljs-attr">okhttp:</span>
+    <span class="hljs-attr">enable:</span> <span class="hljs-literal">true</span></code></pre>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_添加缓存"><a class="anchor" href="#_添加缓存"></a>添加缓存</h2>
+<h2 id="添加缓存"><a class="anchor" href="#添加缓存"></a>添加缓存</h2>
 <div class="sectionbody">
 
 </div>
 </div>
 <div class="sect1">
-<h2 id="_自定义异常处理"><a class="anchor" href="#_自定义异常处理"></a>自定义异常处理</h2>
+<h2 id="自定义异常处理"><a class="anchor" href="#自定义异常处理"></a>自定义异常处理</h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CustomErrorDecoder implements ErrorDecoder {
-    @Override
-    public Exception decode(String methodKey, Response response) {
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomErrorDecoder</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">ErrorDecoder</span> {
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> Exception <span class="hljs-title function_">decode</span><span class="hljs-params">(String methodKey, Response response)</span> {
 
-        switch (response.status()){
-            case 400:
-                return new BadRequestException();
-            case 404:
-                return new NotFoundException();
-            default:
-                return new Exception("error");
+        <span class="hljs-keyword">switch</span> (response.status()){
+            <span class="hljs-keyword">case</span> <span class="hljs-number">400</span>:
+                <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">BadRequestException</span>();
+            <span class="hljs-keyword">case</span> <span class="hljs-number">404</span>:
+                <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NotFoundException</span>();
+            <span class="hljs-keyword">default</span>:
+                <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Exception</span>(<span class="hljs-string">&quot;error&quot;</span>);
         }
     }
 }</code></pre>
@@ -334,11 +341,11 @@ protected void logRequest(String configKey, Level logLevel, Request request) {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class ClientConfiguration {
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ClientConfiguration</span> {
 
-    @Bean
-    public ErrorDecoder errorDecoder() {
-        return new CustomErrorDecoder();
+    <span class="hljs-meta">@Bean</span>
+    <span class="hljs-keyword">public</span> ErrorDecoder <span class="hljs-title function_">errorDecoder</span><span class="hljs-params">()</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">CustomErrorDecoder</span>();
     }
 }</code></pre>
 </div>
@@ -346,31 +353,31 @@ protected void logRequest(String configKey, Level logLevel, Request request) {
 </div>
 </div>
 <div class="sect1">
-<h2 id="_feign_form"><a class="anchor" href="#_feign_form"></a>Feign-Form</h2>
+<h2 id="feign-form"><a class="anchor" href="#feign-form"></a>Feign-Form</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><code>Feign-form</code> 增加了对 <code>application/x-www-form-urlencoded</code> 和 <code>multipart/form-data</code> 的编码支持。</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
-    &lt;groupId&gt;io.github.openfeign.form&lt;/groupId&gt;
-    &lt;artifactId&gt;feign-form-spring&lt;/artifactId&gt;
-    &lt;version&gt;3.8.0&lt;/version&gt;
-&lt;/dependency&gt;</code></pre>
+<pre class="highlight"><code class="language-xml" data-lang="xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">groupId</span>&gt;</span>io.github.openfeign.form<span class="hljs-tag">&lt;/<span class="hljs-name">groupId</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">artifactId</span>&gt;</span>feign-form-spring<span class="hljs-tag">&lt;/<span class="hljs-name">artifactId</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">version</span>&gt;</span>3.8.0<span class="hljs-tag">&lt;/<span class="hljs-name">version</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">dependency</span>&gt;</span></code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_上传文件_multipartform_data"><a class="anchor" href="#_上传文件_multipartform_data"></a>上传文件 (<code>multipart/form-data</code>)</h3>
+<h3 id="上传文件-multipartform-data"><a class="anchor" href="#上传文件-multipartform-data"></a>上传文件 (<code>multipart/form-data</code>)</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@FeignClient(configuration = AliyunOssClient.MultipartSupportConfig.class) {
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@FeignClient(configuration = AliyunOssClient.MultipartSupportConfig.class)</span> {
 
-    @Bean
-    class MultipartSupportConfig {
-        @Bean
-        public Encoder feignFormEncoder() {
-            return new SpringFormEncoder();
+    <span class="hljs-meta">@Bean</span>
+    <span class="hljs-keyword">class</span> <span class="hljs-title class_">MultipartSupportConfig</span> {
+        <span class="hljs-meta">@Bean</span>
+        <span class="hljs-keyword">public</span> Encoder <span class="hljs-title function_">feignFormEncoder</span><span class="hljs-params">()</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SpringFormEncoder</span>();
         }
     }
 }</code></pre>
@@ -378,19 +385,19 @@ protected void logRequest(String configKey, Level logLevel, Request request) {
 </div>
 </div>
 <div class="sect2">
-<h3 id="_form表单提交_applicationx_www_form_urlencoded"><a class="anchor" href="#_form表单提交_applicationx_www_form_urlencoded"></a>Form表单提交 (<code>application/x-www-form-urlencoded</code>)</h3>
+<h3 id="form表单提交-applicationx-www-form-urlencoded"><a class="anchor" href="#form表单提交-applicationx-www-form-urlencoded"></a>Form表单提交 (<code>application/x-www-form-urlencoded</code>)</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@FeignClient(configuration = AliyunOssClient.MultipartSupportConfig.class) {
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@FeignClient(configuration = AliyunOssClient.MultipartSupportConfig.class)</span> {
 
-    @Bean
-    class MultipartSupportConfig {
-        @Autowired
-        private ObjectFactory&lt;HttpMessageConverters&gt; messageConverters;
+    <span class="hljs-meta">@Bean</span>
+    <span class="hljs-keyword">class</span> <span class="hljs-title class_">MultipartSupportConfig</span> {
+        <span class="hljs-meta">@Autowired</span>
+        <span class="hljs-keyword">private</span> ObjectFactory&lt;HttpMessageConverters&gt; messageConverters;
 
-        @Bean
-        public Encoder feignFormEncoder() {
-            return new SpringFormEncoder(new SpringEncoder(messageConverters));
+        <span class="hljs-meta">@Bean</span>
+        <span class="hljs-keyword">public</span> Encoder <span class="hljs-title function_">feignFormEncoder</span><span class="hljs-params">()</span> {
+            <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SpringFormEncoder</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">SpringEncoder</span>(messageConverters));
         }
     }
 }</code></pre>
@@ -399,15 +406,23 @@ protected void logRequest(String configKey, Level logLevel, Request request) {
 </div>
 </div>
 </div>
+<nav class="pagination">
+  <span class="prev"><a href="spring-cloud-open-feign/spring-feign-configuration.html">Spring Cloud Open Feign 配置项</a></span>
+  <span class="next"><a href="future.html">Feign 的未来</a></span>
+</nav>
 </article>
   </div>
 </main>
 </div>
-<footer class="footer">
+<!--<footer class="footer">
   <p>This page was built using the Antora default UI.</p>
   <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
 </footer>
+-->
 <script id="site-script" src="../_/js/site.js" data-ui-root-path="../_"></script>
 <script async src="../_/js/vendor/highlight.js"></script>
+<script src="../_/js/vendor/lunr.js"></script>
+<script src="../_/js/search-ui.js" id="search-ui-script" data-site-root-path=".." data-snippet-length="100" data-stylesheet="../_/css/search.css"></script>
+<script async src="../search-index.js"></script>
   </body>
 </html>
