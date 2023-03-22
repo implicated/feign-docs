@@ -234,7 +234,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="http协议中关于压缩传输的规定"><a class="anchor" href="#http协议中关于压缩传输的规定"></a>HTTP协议中关于压缩传输的规定</h3>
+<h3 id="http-协议中关于压缩传输的规定"><a class="anchor" href="#http-协议中关于压缩传输的规定"></a><code>HTTP</code> 协议中关于压缩传输的规定</h3>
 <div class="paragraph">
 <p>客户端向服务器请求中带有：<code>Accept-Encoding:gzip，deflate</code> 字段，向服务器表示客户端支持的压缩格式（<code>gzip</code> 或者 <code>deflate</code>），如果不发送该消息头，服务端默认是不会压缩的。</p>
 </div>
@@ -266,7 +266,7 @@
 <h2 id="替换默认的http实现"><a class="anchor" href="#替换默认的http实现"></a>替换默认的HTTP实现</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="apache-httpclient"><a class="anchor" href="#apache-httpclient"></a><a href="https://hc.apache.org/httpcomponents-client-5.2.x/index.html">Apache HttpClient</a></h3>
+<h3 id="apache-httpclient"><a class="anchor" href="#apache-httpclient"></a><a href="https://hc.apache.org/httpcomponents-client-5.2.x/index.html" target="_blank" rel="noopener">Apache HttpClient</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-xml" data-lang="xml"><span class="hljs-tag">&lt;<span class="hljs-name">dependency</span>&gt;</span>
@@ -286,9 +286,9 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="okhttp"><a class="anchor" href="#okhttp"></a><a href="https://square.github.io/okhttp/">OkHttp</a></h3>
+<h3 id="okhttp"><a class="anchor" href="#okhttp"></a><a href="https://square.github.io/okhttp/" target="_blank" rel="noopener">OkHttp</a></h3>
 <div class="paragraph">
-<p><a href="https://segmentfault.com/a/1190000038840773">性能最好</a>。</p>
+<p><a href="https://segmentfault.com/a/1190000038840773" target="_blank" rel="noopener">性能最好</a>。</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -315,7 +315,19 @@
 <div class="sect1">
 <h2 id="添加缓存"><a class="anchor" href="#添加缓存"></a>添加缓存</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>可以使用 <code>@EnableCaching</code> 为 <code>Feign</code> 开启缓存。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">public</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">DemoClient</span> {
 
+    <span class="hljs-meta">@GetMapping(&quot;/demo/{filterParam}&quot;)</span>
+    <span class="hljs-meta">@Cacheable(cacheNames = &quot;demo-cache&quot;, key = &quot;#keyParam&quot;)</span>
+    String <span class="hljs-title function_">demoEndpoint</span><span class="hljs-params">(String keyParam, <span class="hljs-meta">@PathVariable</span> String filterParam)</span>;
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -368,7 +380,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="上传文件-multipartform-data"><a class="anchor" href="#上传文件-multipartform-data"></a>上传文件 (<code>multipart/form-data</code>)</h3>
+<h3 id="上传文件-multipartform-data"><a class="anchor" href="#上传文件-multipartform-data"></a><a href="https://www.itmuch.com/spring-cloud-sum/feign-form-params/" target="_blank" rel="noopener">上传文件 (<code>multipart/form-data</code>)</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@FeignClient(configuration = AliyunOssClient.MultipartSupportConfig.class)</span> {
@@ -385,7 +397,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="form表单提交-applicationx-www-form-urlencoded"><a class="anchor" href="#form表单提交-applicationx-www-form-urlencoded"></a>Form表单提交 (<code>application/x-www-form-urlencoded</code>)</h3>
+<h3 id="form表单提交-applicationx-www-form-urlencoded"><a class="anchor" href="#form表单提交-applicationx-www-form-urlencoded"></a><a href="https://www.itmuch.com/spring-cloud-sum/spring-cloud-feign-upload/" target="_blank" rel="noopener">Form表单提交 (<code>application/x-www-form-urlencoded</code>)</a></h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@FeignClient(configuration = AliyunOssClient.MultipartSupportConfig.class)</span> {

@@ -163,16 +163,16 @@
 <div class="ulist">
 <ul>
 <li>
-<p>注入 <code>FeignClient</code> 配置信息(实际是注入 <code>FeignClientFactoryBean</code>)</p>
+<p>注入 <code>FeignClient</code> 配置信息（实际是注入 <code>FeignClientSpecification</code>）。</p>
 </li>
 <li>
-<p>注入 <code>FeignClient</code> (实际是注入 <code>FeignClientFactoryBean</code>)</p>
+<p>注入 <code>FeignClient</code> 客户端（实际是注入 <code>FeignClientFactoryBean</code>）。</p>
 </li>
 </ul>
 </div>
 </li>
 <li>
-<p>使用 <code>FeignClientFactoryBean</code> 和 <code>FeignClientFactoryBean</code> 为每个 <code>@FeignClient</code> 标记的类创建子容器，每个容器相互隔离，都拥有完整的 <code>FeignClient</code> 配置信息</p>
+<p>使用 <code>FeignClientSpecification</code> 和 <code>FeignClientFactoryBean</code> 为每个 <code>@FeignClient</code> 标记的类创建子容器，每个容器相互隔离，都拥有完整的 <code>FeignClient</code> 配置信息。</p>
 </li>
 </ul>
 </div>
@@ -181,17 +181,24 @@
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
 </colgroup>
 <thead>
 <tr>
+<th class="tableblock halign-left valign-top">FeignClientSpecification</th>
 <th class="tableblock halign-left valign-top">FeignClientFactoryBean</th>
 <th class="tableblock halign-left valign-top">FeignContext</th>
 </tr>
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
+<div class="content">
+<img src="../_images/feign-client-specification.png" alt="feign client specification">
+</div>
+</div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
 <div class="content">
 <img src="../_images/feign-client-factory-bean.png" alt="feign client factory bean">
@@ -225,7 +232,7 @@
 <div class="listingblock">
 <div class="title"><code>org.springframework.cloud.openfeign.EnableFeignClients</code></div>
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@Retention(RetentionPolicy.RUNTIME)</span>
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@Retention()</span>
 <span class="hljs-meta">@Target(ElementType.TYPE)</span>
 <span class="hljs-meta">@Documented</span>
 <span class="hljs-meta">@Import(FeignClientsRegistrar.class)</span> <i class="conum" data-value="1"></i><b>(1)</b>
@@ -382,7 +389,7 @@
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>.AnnotationMetadata
+<td>接口元数据（拿了个名字）
 <details>
 <summary class="title">Details</summary>
 <div class="content">
@@ -396,7 +403,7 @@
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>FeignClient AnnotationAttributes
+<td><code>@FeignClient</code> 注解的属性值
 <details>
 <summary class="title">Details</summary>
 <div class="content">
@@ -463,7 +470,10 @@
 <h2 id="feignclientfactorybean"><a class="anchor" href="#feignclientfactorybean"></a>FeignClientFactoryBean</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>注册 <code>FeignClientFactoryBean</code> 时，会把 <code>getObject()</code> 方法返回的对象注入到 Spring 容器中</p>
+<p><code>FeignClientFactoryBean</code> 实现了 <code>FactoryBean&lt;Object&gt;</code> 接口。</p>
+</div>
+<div class="paragraph">
+<p>在注册 <code>FeignClientFactoryBean</code> 时，会把 <code>getObject()</code> 方法返回的对象注入到 Spring 容器中</p>
 </div>
 <div class="listingblock">
 <div class="title">org.springframework.cloud.openfeign.FeignClientFactoryBean#getObject</div>
@@ -510,7 +520,7 @@
     <span class="hljs-comment">// 格式化 url</span>
     <span class="hljs-type">String</span> <span class="hljs-variable">url</span> <span class="hljs-operator">=</span> <span class="hljs-built_in">this</span>.url + cleanPath();
     <span class="hljs-comment">// 获取 http client</span>
-    <span class="hljs-type">Client</span> <span class="hljs-variable">client</span> <span class="hljs-operator">=</span> getOptional(context, Client.class);  <i class="conum" data-value="4"></i><b>(4)</b> <i class="conum" data-value="5"></i><b>(5)</b>
+    <span class="hljs-type">Client</span> <span class="hljs-variable">client</span> <span class="hljs-operator">=</span> getOptional(context, Client.class); <i class="conum" data-value="4"></i><b>(4)</b>
     <span class="hljs-keyword">if</span> (client != <span class="hljs-literal">null</span>) {
         <span class="hljs-keyword">if</span> (client <span class="hljs-keyword">instanceof</span> LoadBalancerFeignClient) {
             <span class="hljs-comment">// not load balancing because we have a url,</span>
@@ -542,6 +552,7 @@
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>如果配置了 Hystrix，执行此方法
 <div class="listingblock">
+<div class="title">org.springframework.cloud.openfeign.FeignClientFactoryBean#loadBalance</div>
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">protected</span> &lt;T&gt; T <span class="hljs-title function_">loadBalance</span><span class="hljs-params">(Feign.Builder builder,
                             FeignContext context,
@@ -570,8 +581,9 @@
 <td><i class="conum" data-value="4"></i><b>4</b></td>
 <td><code>get()</code> 和 <code>getOptional()</code> 都是从 Feign 容器中去获取需要的类。其中通过 <code>get()</code> 方法获取的类不能为空。
 <div class="listingblock">
+<div class="title">org.springframework.cloud.openfeign.FeignClientFactoryBean#get</div>
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">protected</span> &lt;T&gt; T <span class="hljs-title function_">get</span><span class="hljs-params">(FeignContext context, Class&lt;T&gt; type)</span> { <i class="conum" data-value="4"></i><b>(4)</b>
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">protected</span> &lt;T&gt; T <span class="hljs-title function_">get</span><span class="hljs-params">(FeignContext context, Class&lt;T&gt; type)</span> {
     <span class="hljs-comment">// contextId 是容器名称，type 是要获取的类</span>
     <span class="hljs-type">T</span> <span class="hljs-variable">instance</span> <span class="hljs-operator">=</span> context.getInstance(<span class="hljs-built_in">this</span>.contextId, type);
     <span class="hljs-keyword">if</span> (instance == <span class="hljs-literal">null</span>) {
@@ -580,17 +592,17 @@
                 <span class="hljs-built_in">this</span>.contextId);
     }
     <span class="hljs-keyword">return</span> instance;
-}
-
-<span class="hljs-keyword">protected</span> &lt;T&gt; T <span class="hljs-title function_">getOptional</span><span class="hljs-params">(FeignContext context,Class&lt;T&gt; type)</span> { <i class="conum" data-value="4"></i><b>(4)</b>
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">org.springframework.cloud.openfeign.FeignClientFactoryBean#getOptional</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">protected</span> &lt;T&gt; T <span class="hljs-title function_">getOptional</span><span class="hljs-params">(FeignContext context,Class&lt;T&gt; type)</span> {
     <span class="hljs-keyword">return</span> context.getInstance(<span class="hljs-built_in">this</span>.contextId, type);
 }</code></pre>
 </div>
 </div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><code>Feign</code> 默认的 <code>http client</code> 是 <code>java.net.HttpURLConnection</code>。</td>
 </tr>
 </table>
 </div>
@@ -621,31 +633,64 @@
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">class</span> <span class="hljs-title class_">HystrixTargeter</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">Targeter</span> {
 
-    <span class="hljs-meta">@Override</span>
-    <span class="hljs-keyword">public</span> &lt;T&gt; T <span class="hljs-title function_">target</span><span class="hljs-params">(FeignClientFactoryBean factory, Feign.Builder feign,
-            FeignContext context, Target.HardCodedTarget&lt;T&gt; target)</span> {
-        <span class="hljs-keyword">if</span> (!(feign <span class="hljs-keyword">instanceof</span> feign.hystrix.HystrixFeign.Builder)) {
-            <span class="hljs-keyword">return</span> feign.target(target);
-        }
-        feign.hystrix.HystrixFeign.<span class="hljs-type">Builder</span> <span class="hljs-variable">builder</span> <span class="hljs-operator">=</span> (feign.hystrix.HystrixFeign.Builder) feign;
-        <span class="hljs-type">String</span> <span class="hljs-variable">name</span> <span class="hljs-operator">=</span> StringUtils.isEmpty(factory.getContextId()) ? factory.getName()
-                : factory.getContextId();
-        <span class="hljs-type">SetterFactory</span> <span class="hljs-variable">setterFactory</span> <span class="hljs-operator">=</span> getOptional(name, context, SetterFactory.class);
-        <span class="hljs-keyword">if</span> (setterFactory != <span class="hljs-literal">null</span>) {
-            builder.setterFactory(setterFactory);
-        }
-        Class&lt;?&gt; fallback = factory.getFallback();
-        <span class="hljs-keyword">if</span> (fallback != <span class="hljs-keyword">void</span>.class) {
-            <span class="hljs-keyword">return</span> targetWithFallback(name, context, target, builder, fallback);
-        }
-        Class&lt;?&gt; fallbackFactory = factory.getFallbackFactory();
-        <span class="hljs-keyword">if</span> (fallbackFactory != <span class="hljs-keyword">void</span>.class) {
-            <span class="hljs-keyword">return</span> targetWithFallbackFactory(name, context, target, builder,
-                    fallbackFactory);
-        }
-        <span class="hljs-comment">// 最终执行 Feign.Builder 的 target方法</span>
-        <span class="hljs-keyword">return</span> feign.target(target);
-    }</code></pre>
+	<span class="hljs-meta">@Override</span>
+	<span class="hljs-keyword">public</span> &lt;T&gt; T <span class="hljs-title function_">target</span><span class="hljs-params">(FeignClientFactoryBean factory, Feign.Builder feign, FeignContext context, Target.HardCodedTarget&lt;T&gt; target)</span> {
+		<span class="hljs-comment">// 校验</span>
+		<span class="hljs-keyword">if</span> (!(feign <span class="hljs-keyword">instanceof</span> feign.hystrix.HystrixFeign.Builder)) {
+			<span class="hljs-keyword">return</span> feign.target(target);
+		}
+
+		feign.hystrix.HystrixFeign.<span class="hljs-type">Builder</span> <span class="hljs-variable">builder</span> <span class="hljs-operator">=</span> (feign.hystrix.HystrixFeign.Builder) feign;
+		<span class="hljs-type">String</span> <span class="hljs-variable">name</span> <span class="hljs-operator">=</span> StringUtils.isEmpty(factory.getContextId()) ? factory.getName()
+			: factory.getContextId();
+		<span class="hljs-type">SetterFactory</span> <span class="hljs-variable">setterFactory</span> <span class="hljs-operator">=</span> getOptional(name, context, SetterFactory.class);
+		<span class="hljs-keyword">if</span> (setterFactory != <span class="hljs-literal">null</span>) {
+			builder.setterFactory(setterFactory);
+		}
+		<span class="hljs-comment">// fallback 熔断</span>
+		Class&lt;?&gt; fallback = factory.getFallback();
+		<span class="hljs-keyword">if</span> (fallback != <span class="hljs-keyword">void</span>.class) {
+			<span class="hljs-keyword">return</span> targetWithFallback(name, context, target, builder, fallback);
+		}
+		<span class="hljs-comment">// fallbackFactory 熔断</span>
+		Class&lt;?&gt; fallbackFactory = factory.getFallbackFactory();
+		<span class="hljs-keyword">if</span> (fallbackFactory != <span class="hljs-keyword">void</span>.class) {
+			<span class="hljs-keyword">return</span> targetWithFallbackFactory(name, context, target, builder,
+				fallbackFactory);
+		}
+
+		<span class="hljs-keyword">return</span> feign.target(target);
+	}
+
+	<span class="hljs-keyword">private</span> &lt;T&gt; T <span class="hljs-title function_">targetWithFallbackFactory</span><span class="hljs-params">(String feignClientName, FeignContext context,
+											Target.HardCodedTarget&lt;T&gt; target, HystrixFeign.Builder builder,
+											Class&lt;?&gt; fallbackFactoryClass)</span> {
+		FallbackFactory&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">T</span>&gt; fallbackFactory = (FallbackFactory&lt;? <span class="hljs-keyword">extends</span> <span class="hljs-title class_">T</span>&gt;) getFromContext(
+			<span class="hljs-string">&quot;fallbackFactory&quot;</span>, feignClientName, context, fallbackFactoryClass,
+			FallbackFactory.class);
+		<span class="hljs-keyword">return</span> builder.target(target, fallbackFactory);
+	}
+
+	<span class="hljs-keyword">private</span> &lt;T&gt; T <span class="hljs-title function_">targetWithFallback</span><span class="hljs-params">(String feignClientName, FeignContext context,
+									 Target.HardCodedTarget&lt;T&gt; target, HystrixFeign.Builder builder,
+									 Class&lt;?&gt; fallback)</span> {
+		<span class="hljs-type">T</span> <span class="hljs-variable">fallbackInstance</span> <span class="hljs-operator">=</span> getFromContext(<span class="hljs-string">&quot;fallback&quot;</span>, feignClientName, context,
+			fallback, target.type());
+		<span class="hljs-keyword">return</span> builder.target(target, fallbackInstance);
+	}
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">feign.hystrix.HystrixFeign.Builder</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">public</span> &lt;T&gt; T <span class="hljs-title function_">target</span><span class="hljs-params">(Target&lt;T&gt; target, T fallback)</span> {
+  <span class="hljs-keyword">return</span> build(fallback != <span class="hljs-literal">null</span> ? <span class="hljs-keyword">new</span> <span class="hljs-title class_">FallbackFactory</span>.Default&lt;T&gt;(fallback) : <span class="hljs-literal">null</span>).newInstance(target);
+}
+
+<span class="hljs-keyword">public</span> &lt;T&gt; T <span class="hljs-title function_">target</span><span class="hljs-params">(Target&lt;T&gt; target, FallbackFactory&lt;? extends T&gt; fallbackFactory)</span> {
+  <span class="hljs-keyword">return</span> build(fallbackFactory).newInstance(target);
+}</code></pre>
 </div>
 </div>
 </div>
@@ -721,77 +766,62 @@
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="配置信息"><a class="anchor" href="#配置信息"></a>配置信息</h2>
-<div class="sectionbody">
 <div class="sect2">
-<h3 id="feignclientproperties"><a class="anchor" href="#feignclientproperties"></a><code>FeignClientProperties</code></h3>
+<h3 id="调用"><a class="anchor" href="#调用"></a>调用</h3>
+<div class="paragraph">
+<p><code>FeignClientFactoryBean</code> 中创建 <code>Feign.Builder</code> 和给 <code>Feign.Builder</code> 设置属性时调用，根据名字从中 <code>ApplicationContext</code> 获取 <code>FeignContext</code> 子容器。</p>
+</div>
 <div class="listingblock">
+<div class="title">org.springframework.cloud.openfeign.FeignClientFactoryBean</div>
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@ConfigurationProperties(&quot;feign.client&quot;)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">FeignClientProperties</span> {
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">protected</span> Feign.Builder <span class="hljs-title function_">feign</span><span class="hljs-params">(FeignContext context)</span> {
+    <span class="hljs-type">FeignLoggerFactory</span> <span class="hljs-variable">loggerFactory</span> <span class="hljs-operator">=</span> get(context, FeignLoggerFactory.class);
+    <span class="hljs-type">Logger</span> <span class="hljs-variable">logger</span> <span class="hljs-operator">=</span> loggerFactory.create(<span class="hljs-built_in">this</span>.type);
 
-	<span class="hljs-keyword">private</span> <span class="hljs-type">boolean</span> <span class="hljs-variable">defaultToProperties</span> <span class="hljs-operator">=</span> <span class="hljs-literal">true</span>;
+    <span class="hljs-comment">// build()设置默认值</span>
+    Feign.<span class="hljs-type">Builder</span> <span class="hljs-variable">builder</span> <span class="hljs-operator">=</span> get(context, Feign.Builder.class)
+            <span class="hljs-comment">// required values</span>
+            .logger(logger)
+            .encoder(get(context, Encoder.class))
+            .decoder(get(context, Decoder.class))
+            .contract(get(context, Contract.class));
 
-	<span class="hljs-keyword">private</span> <span class="hljs-type">String</span> <span class="hljs-variable">defaultConfig</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;default&quot;</span>;
+    configureFeign(context, builder);
 
-	<span class="hljs-keyword">private</span> Map&lt;String, FeignClientConfiguration&gt; config = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();
+    <span class="hljs-keyword">return</span> builder;
+}
 
-    <span class="hljs-comment">//...</span>
+<span class="hljs-keyword">protected</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">configureUsingConfiguration</span><span class="hljs-params">(FeignContext context,
+                                           Feign.Builder builder)</span> {
+    Logger.<span class="hljs-type">Level</span> <span class="hljs-variable">level</span> <span class="hljs-operator">=</span> getOptional(context, Logger.Level.class);
+    <span class="hljs-keyword">if</span> (level != <span class="hljs-literal">null</span>) {
+        builder.logLevel(level);
+    }
+    <span class="hljs-type">Retryer</span> <span class="hljs-variable">retryer</span> <span class="hljs-operator">=</span> getOptional(context, Retryer.class);
+    <span class="hljs-keyword">if</span> (retryer != <span class="hljs-literal">null</span>) {
+        builder.retryer(retryer);
+    }
+    <span class="hljs-type">ErrorDecoder</span> <span class="hljs-variable">errorDecoder</span> <span class="hljs-operator">=</span> getOptional(context, ErrorDecoder.class);
+    <span class="hljs-keyword">if</span> (errorDecoder != <span class="hljs-literal">null</span>) {
+        builder.errorDecoder(errorDecoder);
+    }
+    Request.<span class="hljs-type">Options</span> <span class="hljs-variable">options</span> <span class="hljs-operator">=</span> getOptional(context, Request.Options.class);
+    <span class="hljs-keyword">if</span> (options != <span class="hljs-literal">null</span>) {
+        builder.options(options);
+    }
+    Map&lt;String, RequestInterceptor&gt; requestInterceptors = context
+        .getInstances(<span class="hljs-built_in">this</span>.contextId, RequestInterceptor.class);
+    <span class="hljs-keyword">if</span> (requestInterceptors != <span class="hljs-literal">null</span>) {
+        builder.requestInterceptors(requestInterceptors.values());
+    }
+    <span class="hljs-type">QueryMapEncoder</span> <span class="hljs-variable">queryMapEncoder</span> <span class="hljs-operator">=</span> getOptional(context, QueryMapEncoder.class);
+    <span class="hljs-keyword">if</span> (queryMapEncoder != <span class="hljs-literal">null</span>) {
+        builder.queryMapEncoder(queryMapEncoder);
+    }
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">this</span>.decode404) {
+        builder.decode404();
+    }
 }</code></pre>
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../_images/feign-client-properties.png" alt="feign client properties">
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="feignhttpclientproperties"><a class="anchor" href="#feignhttpclientproperties"></a><code>FeignHttpClientProperties</code></h3>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@ConfigurationProperties(prefix = &quot;feign.httpclient&quot;)</span>
-<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">FeignHttpClientProperties</span> {
-
-	<span class="hljs-comment">/**
-	 * Default value for disabling SSL validation.
-	 */</span>
-	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">boolean</span> <span class="hljs-variable">DEFAULT_DISABLE_SSL_VALIDATION</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;
-
-	<span class="hljs-comment">/**
-	 * 默认 httpclient 最大连接数
-	 */</span>
-	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">DEFAULT_MAX_CONNECTIONS</span> <span class="hljs-operator">=</span> <span class="hljs-number">200</span>;
-
-	<span class="hljs-comment">/**
-	 * 默认每个 FeignClient 最大连接数
-	 */</span>
-	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">DEFAULT_MAX_CONNECTIONS_PER_ROUTE</span> <span class="hljs-operator">=</span> <span class="hljs-number">50</span>;
-
-	<span class="hljs-comment">/**
-	 * 默认存活时间
-	 */</span>
-	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">long</span> <span class="hljs-variable">DEFAULT_TIME_TO_LIVE</span> <span class="hljs-operator">=</span> <span class="hljs-number">900L</span>;
-
-	<span class="hljs-comment">/**
-	 * 默认超时时间
-	 */</span>
-	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">DEFAULT_CONNECTION_TIMEOUT</span> <span class="hljs-operator">=</span> <span class="hljs-number">2000</span>;
-
-	<span class="hljs-comment">/**
-	 * 默认时间单位 s
-	 */</span>
-	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">TimeUnit</span> <span class="hljs-variable">DEFAULT_TIME_TO_LIVE_UNIT</span> <span class="hljs-operator">=</span> TimeUnit.SECONDS;
-    <span class="hljs-comment">//...</span>
-}</code></pre>
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../_images/feign-http-client-properties.png" alt="feign http client properties">
 </div>
 </div>
 </div>

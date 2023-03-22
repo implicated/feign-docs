@@ -152,67 +152,6 @@
 <article class="doc">
 <h1 class="page">Spring Cloud Open Feign 配置项</h1>
 <div class="sect1">
-<h2 id="feignclientsconfiguration默认值"><a class="anchor" href="#feignclientsconfiguration默认值"></a>FeignClientsConfiguration（默认值）</h2>
-<div class="sectionbody">
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 66.6667%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">组件</th>
-<th class="tableblock halign-left valign-top">默认值</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Contract</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>SpringMvcContract</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Encoder</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>SpringEncoder</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Decoder</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>SpringDecoder</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ErrorDecoder</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>feign.codec.ErrorDecoder.Default</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Logger</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Slf4jLogger</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Retryer</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Retryer.NEVER_RETRY</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">RequestInterceptor</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>无</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect1">
 <h2 id="enablefeignclients"><a class="anchor" href="#enablefeignclients"></a><code>@EnableFeignClients</code></h2>
 <div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
@@ -233,12 +172,11 @@
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">basePackages</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">包扫描路径（字符串数组）</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">类扫描路径（字符串数组）</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">basePackageClasses</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">扫描指定的每个类所在的包下面的所有被@FeignClient修饰的类
-[#_defaultConfiguration]</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">扫描指定的每个类所在的包下面的所有被 <code>@FeignClient</code> 修饰的类</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">defaultConfiguration</p></td>
@@ -246,10 +184,31 @@
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">clients</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">用 <code>@FeignClient</code> 注释的类的列表。与 <code>basePackages</code> 互斥</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">用 <code>@FeignClient</code> 注释的类的列表。</p></td>
 </tr>
 </tbody>
 </table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><code>clients</code> 与类路径扫描互斥。</p>
+</li>
+<li>
+<p>同时指定 <code>clients</code> 和类路径扫描，则 <code>clients</code> 优先。</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -358,8 +317,75 @@
 </div>
 </div>
 <div class="sect1">
+<h2 id="feignclientsconfiguration"><a class="anchor" href="#feignclientsconfiguration"></a>FeignClientsConfiguration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>全局默认值。</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">组件</th>
+<th class="tableblock halign-left valign-top">默认值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Contract</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SpringMvcContract</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Encoder</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SpringEncoder</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Decoder</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SpringDecoder</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ErrorDecoder</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>feign.codec.ErrorDecoder.Default</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Logger</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Slf4jLogger</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Retryer</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Retryer.NEVER_RETRY</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RequestInterceptor</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>无</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
 <h2 id="feignclient-properties"><a class="anchor" href="#feignclient-properties"></a>FeignClient Properties</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p><code>Feign</code> 客户端配置。</p>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 66.6666%;">
@@ -369,7 +395,7 @@
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">配置</th>
-<th class="tableblock halign-left valign-top">默认值（ <mark>foo</mark> 是Feign默认）</th>
+<th class="tableblock halign-left valign-top">默认值（ <mark>Feign默认</mark> ）</th>
 <th class="tableblock halign-left valign-top">描述</th>
 </tr>
 </thead>
@@ -442,7 +468,7 @@
 <h2 id="feignhttpclient-properties"><a class="anchor" href="#feignhttpclient-properties"></a>FeignHttpClient Properties</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>使用 <a href="https://hc.apache.org/httpcomponents-client-5.2.x/index.html">Apache HttpClient</a> 发送 <code>HTTP</code> 请求。</p>
+<p>连接池配置。</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -505,11 +531,39 @@
 </tr>
 </tbody>
 </table>
+<details>
+<summary class="title">Details</summary>
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/feign-client-properties.png" alt="feign client properties">
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@ConfigurationProperties(&quot;feign.client&quot;)</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">FeignClientProperties</span> {
+
+	<span class="hljs-keyword">private</span> <span class="hljs-type">boolean</span> <span class="hljs-variable">defaultToProperties</span> <span class="hljs-operator">=</span> <span class="hljs-literal">true</span>;
+
+	<span class="hljs-keyword">private</span> <span class="hljs-type">String</span> <span class="hljs-variable">defaultConfig</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;default&quot;</span>;
+
+	<span class="hljs-keyword">private</span> Map&lt;String, FeignClientConfiguration&gt; config = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashMap</span>&lt;&gt;();
+
+    <span class="hljs-comment">//...</span>
+}</code></pre>
+</div>
+</div>
+</div>
+</details>
 </div>
 </div>
 <div class="sect1">
 <h2 id="feign-compression-properties"><a class="anchor" href="#feign-compression-properties"></a>Feign Compression Properties</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p><code>HTTP</code> 压缩配置。</p>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -551,6 +605,54 @@
 </tr>
 </tbody>
 </table>
+<details>
+<summary class="title">Details</summary>
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/feign-http-client-properties.png" alt="feign http client properties">
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@ConfigurationProperties(prefix = &quot;feign.httpclient&quot;)</span>
+<span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">FeignHttpClientProperties</span> {
+
+	<span class="hljs-comment">/**
+	 * Default value for disabling SSL validation.
+	 */</span>
+	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">boolean</span> <span class="hljs-variable">DEFAULT_DISABLE_SSL_VALIDATION</span> <span class="hljs-operator">=</span> <span class="hljs-literal">false</span>;
+
+	<span class="hljs-comment">/**
+	 * 默认 httpclient 最大连接数
+	 */</span>
+	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">DEFAULT_MAX_CONNECTIONS</span> <span class="hljs-operator">=</span> <span class="hljs-number">200</span>;
+
+	<span class="hljs-comment">/**
+	 * 默认每个 FeignClient 最大连接数
+	 */</span>
+	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">DEFAULT_MAX_CONNECTIONS_PER_ROUTE</span> <span class="hljs-operator">=</span> <span class="hljs-number">50</span>;
+
+	<span class="hljs-comment">/**
+	 * 默认存活时间
+	 */</span>
+	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">long</span> <span class="hljs-variable">DEFAULT_TIME_TO_LIVE</span> <span class="hljs-operator">=</span> <span class="hljs-number">900L</span>;
+
+	<span class="hljs-comment">/**
+	 * 默认超时时间
+	 */</span>
+	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">int</span> <span class="hljs-variable">DEFAULT_CONNECTION_TIMEOUT</span> <span class="hljs-operator">=</span> <span class="hljs-number">2000</span>;
+
+	<span class="hljs-comment">/**
+	 * 默认时间单位 s
+	 */</span>
+	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">TimeUnit</span> <span class="hljs-variable">DEFAULT_TIME_TO_LIVE_UNIT</span> <span class="hljs-operator">=</span> TimeUnit.SECONDS;
+    <span class="hljs-comment">//...</span>
+}</code></pre>
+</div>
+</div>
+</div>
+</details>
 </div>
 </div>
 <nav class="pagination">

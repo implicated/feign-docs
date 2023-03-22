@@ -187,7 +187,7 @@
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
 <div class="content">
-<img src="../_images/reflective-feign.png" alt="^">
+<img src="../_images/reflective-feign.png" alt="reflective feign">
 </div>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="imageblock">
@@ -205,7 +205,7 @@
 <div class="sectionbody">
 <div class="imageblock kroki">
 <div class="content">
-<img src="../_images/diag-b50deb4e33107e85d10d5bf8c1ea0a2a9a05719d.svg" alt="Diagram">
+<img src="../_images/diag-29f3bdaafcbb966a39da13785aa4a604866303a9.svg" alt="Diagram">
 </div>
 </div>
 </div>
@@ -246,6 +246,7 @@
 }
 
 <span class="hljs-keyword">public</span> Feign <span class="hljs-title function_">build</span><span class="hljs-params">()</span> {
+  <span class="hljs-comment">// 调用处理器工厂，设置属性</span>
   SynchronousMethodHandler.<span class="hljs-type">Factory</span> <span class="hljs-variable">synchronousMethodHandlerFactory</span> <span class="hljs-operator">=</span>
       <span class="hljs-keyword">new</span> <span class="hljs-title class_">SynchronousMethodHandler</span>.Factory(client, retryer, requestInterceptors, logger,
           logLevel, decode404, closeAfterDecode, propagationPolicy);
@@ -304,7 +305,7 @@
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">BuildTemplateByResolvingArgs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">实现了 <code>RequestTemplate.Factory</code> ，HTTP请求生成器工厂。</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">实现了 <code>RequestTemplate.Factory</code> ，<code>HTTP</code> 请求生成器工厂。</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">BuildEncodedTemplateFromArgs</p></td>
@@ -334,16 +335,17 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 <span class="hljs-comment">// 构造器</span>
 <span class="hljs-meta">@Override</span>
 <span class="hljs-keyword">public</span> &lt;T&gt; T <span class="hljs-title function_">newInstance</span><span class="hljs-params">(Target&lt;T&gt; target)</span> {
-    <span class="hljs-comment">// targetToHandlersByName是构造器传入的ParseHandlersByName对象</span>
-    <span class="hljs-comment">// 根据target对象创建方法名和方法处理器的map映射</span>
+    <span class="hljs-comment">// 1.解析方法元数据</span>
+    <span class="hljs-comment">// targetToHandlersByName 是构造器传入的 ParseHandlersByName 对象</span>
+    <span class="hljs-comment">// 根据 target 对象创建方法名和方法处理器的 map 映射</span>
     Map&lt;String, MethodHandler&gt; nameToHandler = targetToHandlersByName.apply(target); <i class="conum" data-value="1"></i><b>(1)</b>
-    <span class="hljs-comment">// 方法处理器的map映射</span>
+    <span class="hljs-comment">// 方法处理器的 map 映射</span>
     Map&lt;Method, MethodHandler&gt; methodToHandler = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedHashMap</span>&lt;Method, MethodHandler&gt;();
-    <span class="hljs-comment">// 默认方法处理器的map映射</span>
+    <span class="hljs-comment">// 默认方法处理器的 map 映射</span>
     List&lt;DefaultMethodHandler&gt; defaultMethodHandlers = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedList</span>&lt;DefaultMethodHandler&gt;();
 
     <span class="hljs-comment">// target.type() is @FeignClient 标识的class</span>
-    <span class="hljs-comment">// 遍历接口所有方法，构建Method -&gt; MethodHandler的映射</span>
+    <span class="hljs-comment">// 遍历接口所有方法，构建 Method  -&gt;  MethodHandler 的映射</span>
     <span class="hljs-keyword">for</span> (Method method : target.type().getMethods()) {
         <span class="hljs-keyword">if</span> (method.getDeclaringClass() == Object.class) {
             <span class="hljs-keyword">continue</span>;
@@ -357,20 +359,20 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
             methodToHandler.put(method, nameToHandler.get(Feign.configKey(target.type(), method)));
         }
     }
-    <span class="hljs-comment">// 设置调用处理器</span>
+    <span class="hljs-comment">// 2.设置调用处理器</span>
     <span class="hljs-comment">// 创建动态代理，factory 是 InvocationHandlerFactory.Default，创建出来的是</span>
     <span class="hljs-comment">// feign.ReflectiveFeign.FeignInvocationHandler.dispatch 持有 methodToHandler 引用</span>
     <span class="hljs-comment">// ReflectiveFeign.FeignInvocationHandler，也就是说后续对方法的调用都会进入到该对象的 invoke 方法</span>
-    <span class="hljs-type">InvocationHandler</span> <span class="hljs-variable">handler</span> <span class="hljs-operator">=</span> factory.create(target, methodToHandler);
-    <span class="hljs-comment">// 生成 JDK 动态代理</span>
-    <span class="hljs-type">T</span> <span class="hljs-variable">proxy</span> <span class="hljs-operator">=</span> (T) Proxy.newProxyInstance(target.type().getClassLoader(),
+    <span class="hljs-type">InvocationHandler</span> <span class="hljs-variable">handler</span> <span class="hljs-operator">=</span> factory.create(target, methodToHandler); <i class="conum" data-value="2"></i><b>(2)</b>
+
+    <span class="hljs-comment">// 3.生成 JDK 动态代理</span>
+    <span class="hljs-type">T</span> <span class="hljs-variable">proxy</span> <span class="hljs-operator">=</span> (T) Proxy.newProxyInstance(target.type().getClassLoader(), <i class="conum" data-value="3"></i><b>(3)</b>
             <span class="hljs-keyword">new</span> <span class="hljs-title class_">Class</span>&lt;?&gt;[]{target.type()}, handler);
 
     <span class="hljs-comment">// 绑定默认方法到代理上</span>
     <span class="hljs-keyword">for</span> (DefaultMethodHandler defaultMethodHandler : defaultMethodHandlers) {
         defaultMethodHandler.bindTo(proxy);
     }
-    <span class="hljs-comment">// 最终注入到 Spring 容器</span>
     <span class="hljs-keyword">return</span> proxy;
 }</code></pre>
 </div>
@@ -379,9 +381,9 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>根据指定的 <code>contract</code> 解析 <code>target</code>
+<td><a href="#_method-handler">根据指定的 contract 解析 target，根据 MethodMetadata 生成 MethodHandler 。</a>
 <details>
-<summary class="title">Map&lt;String, MethodHandler&gt;</summary>
+<summary class="title">方法元数据</summary>
 <div class="content">
 <div class="imageblock">
 <div class="content">
@@ -389,9 +391,13 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 </div>
 </div>
 </div>
-</details>
+</details></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="#_invocation-handler">设置调用处理器，最终执行 HTTP 请求的地方。</a>
 <details>
-<summary class="title">InvocationHandler</summary>
+<summary class="title">调用处理器</summary>
 <div class="content">
 <div class="imageblock">
 <div class="content">
@@ -401,10 +407,32 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 </div>
 </details></td>
 </tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>生成 <code>JDK</code> 动态代理。
+<details>
+<summary class="title">动态代理</summary>
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/proxy-1.png" alt="proxy 1">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/proxy-2.png" alt="proxy 2">
+</div>
+</div>
+</div>
+</details></td>
+</tr>
 </table>
 </div>
-<div class="sect2">
-<h3 id="解析方法元数据"><a class="anchor" href="#解析方法元数据"></a>解析方法元数据</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_method-handler"><a class="anchor" href="#_method-handler"></a>解析方法元数据</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p><code>Spring-cloud</code> 继承 <code>Contract.BaseContract</code>，实现处理参数的方法</p>
 </div>
@@ -419,10 +447,12 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 </div>
 </details>
 <div class="listingblock">
+<div class="title">feign.ReflectiveFeign.ParseHandlersByName#apply</div>
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">public</span> Map&lt;String, MethodHandler&gt; <span class="hljs-title function_">apply</span><span class="hljs-params">(Target key)</span> {
     <span class="hljs-comment">// 待处理的方法元数据</span>
-    List&lt;MethodMetadata&gt; metadata = contract.parseAndValidatateMetadata(key.type());
+    List&lt;MethodMetadata&gt; metadata = contract.parseAndValidatateMetadata(key.type()); <i class="conum" data-value="1"></i><b>(1)</b>
+    <span class="hljs-comment">// 保存生成的方法处理器</span>
     Map&lt;String, MethodHandler&gt; result = <span class="hljs-keyword">new</span> <span class="hljs-title class_">LinkedHashMap</span>&lt;String, MethodHandler&gt;();
     <span class="hljs-comment">// 处理方法元数据</span>
     <span class="hljs-keyword">for</span> (MethodMetadata md : metadata) {
@@ -439,15 +469,30 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
         <span class="hljs-keyword">else</span> {
             buildTemplate = <span class="hljs-keyword">new</span> <span class="hljs-title class_">BuildTemplateByResolvingArgs</span>(md, queryMapEncoder);
         }
+        <span class="hljs-comment">// 创建方法处理器</span>
         result.put(md.configKey(),
-                factory.create(key, md, buildTemplate, options, decoder, errorDecoder));
+                factory.create(key, md, buildTemplate, options, decoder, errorDecoder)); <i class="conum" data-value="2"></i><b>(2)</b>
     }
     <span class="hljs-keyword">return</span> result;
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>获取方法元数据</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>为每个方法创建自己的方法处理器</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="获取方法元数据"><a class="anchor" href="#获取方法元数据"></a>获取方法元数据</h3>
 <div class="paragraph">
-<p>循环解析每个非默认方法元数据。</p>
+<p>解析每个非默认方法获取方法元数据。</p>
 </div>
 <div class="listingblock">
 <div class="title">feign.Contract.BaseContract#parseAndValidatateMetadata</div>
@@ -521,11 +566,44 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="创建方法处理器"><a class="anchor" href="#创建方法处理器"></a>创建方法处理器</h3>
+<div class="listingblock">
+<div class="title">feign.SynchronousMethodHandler.Factory#create</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">public</span> MethodHandler <span class="hljs-title function_">create</span><span class="hljs-params">(Target&lt;?&gt; target,
+                            MethodMetadata md,
+                            RequestTemplate.Factory buildTemplateFromArgs,
+                            Options options,
+                            Decoder decoder,
+                            ErrorDecoder errorDecoder)</span> {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">SynchronousMethodHandler</span>(target, client, retryer, requestInterceptors, logger,
+            logLevel, md, buildTemplateFromArgs, options, decoder,
+            errorDecoder, decode404, closeAfterDecode, propagationPolicy);
+}</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="发起请求"><a class="anchor" href="#发起请求"></a>发起请求</h2>
+<h2 id="_invocation-handler"><a class="anchor" href="#_invocation-handler"></a>设置调用处理器</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>通过工厂方法生成调用处理器。</p>
+</div>
+<div class="listingblock">
+<div class="title">feign.InvocationHandlerFactory.Default</div>
+<div class="content">
+<pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Default</span> <span class="hljs-keyword">implements</span> <span class="hljs-title class_">InvocationHandlerFactory</span> {
+
+    <span class="hljs-meta">@Override</span>
+    <span class="hljs-keyword">public</span> InvocationHandler <span class="hljs-title function_">create</span><span class="hljs-params">(Target target, Map&lt;Method, MethodHandler&gt; dispatch)</span> {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">ReflectiveFeign</span>.FeignInvocationHandler(target, dispatch);
+    }
+}</code></pre>
+</div>
+</div>
 <div class="sect2">
 <h3 id="不同方法的路由"><a class="anchor" href="#不同方法的路由"></a>不同方法的路由</h3>
 <div class="paragraph">
@@ -556,12 +634,14 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 }</code></pre>
 </div>
 </div>
-<div class="sect3">
-<h4 id="defaultmethodhandler"><a class="anchor" href="#defaultmethodhandler"></a><code>DefaultMethodHandler</code></h4>
+</div>
+<div class="sect2">
+<h3 id="defaultmethodhandler"><a class="anchor" href="#defaultmethodhandler"></a><code>DefaultMethodHandler</code></h3>
 <div class="paragraph">
 <p>执行代理接口自己的方法。</p>
 </div>
 <div class="listingblock">
+<div class="title">feign.DefaultMethodHandler#invoke</div>
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@Override</span>
 <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">invoke</span><span class="hljs-params">(Object[] argv)</span> <span class="hljs-keyword">throws</span> Throwable {
@@ -574,12 +654,13 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="synchronousmethodhandler"><a class="anchor" href="#synchronousmethodhandler"></a><code>SynchronousMethodHandler</code></h4>
+<div class="sect2">
+<h3 id="synchronousmethodhandler"><a class="anchor" href="#synchronousmethodhandler"></a><code>SynchronousMethodHandler</code></h3>
 <div class="paragraph">
 <p>定义了发起 HTTP 请求的方法</p>
 </div>
 <div class="listingblock">
+<div class="title">feign.SynchronousMethodHandler#invoke</div>
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@Override</span>
 <span class="hljs-keyword">public</span> Object <span class="hljs-title function_">invoke</span><span class="hljs-params">(Object[] argv)</span> <span class="hljs-keyword">throws</span> Throwable {
@@ -616,11 +697,10 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 }</code></pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="发起请求和解析响应"><a class="anchor" href="#发起请求和解析响应"></a>发起请求和解析响应</h3>
+<div class="sect3">
+<h4 id="发起请求和解析响应"><a class="anchor" href="#发起请求和解析响应"></a>发起请求和解析响应</h4>
 <div class="listingblock">
+<div class="title">feign.SynchronousMethodHandler#executeAndDecode</div>
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">Object <span class="hljs-title function_">executeAndDecode</span><span class="hljs-params">(RequestTemplate template, Options options)</span> <span class="hljs-keyword">throws</span> Throwable {
     <span class="hljs-comment">// RequestTemplate 转换为 Request</span>
@@ -704,10 +784,14 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="发送http请求"><a class="anchor" href="#发送http请求"></a>发送HTTP请求</h3>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="发送http请求"><a class="anchor" href="#发送http请求"></a>发送HTTP请求</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p><code>client</code> 是一个 <code>Client</code> 接口，默认实现类是 <code>Client.Default</code>， 使用 <code>java.net.HttpURLConnection</code> 发送 <code>HTTP</code> 请求。</p>
+<p><code>feign.Client</code> 是一个接口，默认实现类是 <code>feign.Client.Default</code>， 使用 <code>java.net.HttpURLConnection</code> 发送 <code>HTTP</code> 请求。</p>
 </div>
 <div class="paragraph">
 <p>feign还实现了：</p>
@@ -728,7 +812,10 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 </li>
 </ul>
 </div>
+<div class="sect2">
+<h3 id="默认请求方式"><a class="anchor" href="#默认请求方式"></a>默认请求方式。</h3>
 <div class="listingblock">
+<div class="title">feign.Client.Default#execute</div>
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java"><span class="hljs-meta">@Override</span>
 <span class="hljs-keyword">public</span> Response <span class="hljs-title function_">execute</span><span class="hljs-params">(Request request, Options options)</span> <span class="hljs-keyword">throws</span> IOException {
@@ -752,6 +839,7 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 <div class="sect3">
 <h4 id="发送请求"><a class="anchor" href="#发送请求"></a>发送请求</h4>
 <div class="listingblock">
+<div class="title">feign.Client.Default#convertAndSend</div>
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">HttpURLConnection <span class="hljs-title function_">convertAndSend</span><span class="hljs-params">(Request request, Options options)</span> <span class="hljs-keyword">throws</span> IOException {
     <span class="hljs-keyword">final</span> <span class="hljs-type">URL</span> <span class="hljs-variable">url</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">URL</span>(request.url());
@@ -773,6 +861,7 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 <div class="sect3">
 <h4 id="解析响应"><a class="anchor" href="#解析响应"></a>解析响应</h4>
 <div class="listingblock">
+<div class="title">feign.Client.Default#convertResponse</div>
 <div class="content">
 <pre class="highlight"><code class="language-java" data-lang="java">Response <span class="hljs-title function_">convertResponse</span><span class="hljs-params">(HttpURLConnection connection, Request request)</span> <span class="hljs-keyword">throws</span> IOException {
     <span class="hljs-type">int</span> <span class="hljs-variable">status</span> <span class="hljs-operator">=</span> connection.getResponseCode();
@@ -811,6 +900,18 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 }</code></pre>
 </div>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="apache-httpclient"><a class="anchor" href="#apache-httpclient"></a><code>Apache HttpClient</code></h3>
+<div class="paragraph">
+<p>To Be Continued.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="okhttp"><a class="anchor" href="#okhttp"></a><code>OkHttp</code></h3>
+<div class="paragraph">
+<p>To Be Continued.</p>
 </div>
 </div>
 </div>
