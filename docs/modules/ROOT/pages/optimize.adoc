@@ -129,6 +129,8 @@ public interface DemoClient {
 }
 ----
 
+还可以通过属性 `spring.cloud.openfeign.cache.enabled=false` 禁用该功能。
+
 == 自定义异常处理
 
 [source,java,indent=0]
