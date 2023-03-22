@@ -54,6 +54,7 @@ public <T> T target(Target<T> target) {
 }
 
 public Feign build() {
+  // 调用处理器工厂，设置属性
   SynchronousMethodHandler.Factory synchronousMethodHandlerFactory =
       new SynchronousMethodHandler.Factory(client, retryer, requestInterceptors, logger,
           logLevel, decode404, closeAfterDecode, propagationPolicy);
@@ -86,7 +87,7 @@ public Feign build() {
 |ParseHandlersByName
 | 解析处理程序
 |BuildTemplateByResolvingArgs
-| 实现了 `RequestTemplate.Factory` ，HTTP请求生成器工厂。
+| 实现了 `RequestTemplate.Factory` ，`HTTP` 请求生成器工厂。
 |BuildEncodedTemplateFromArgs
 | 继承 `BuildTemplateByResolvingArgs`，重载 `resolve` 方法，解析 `body` 请求。
 |BuildFormEncodedTemplateFromArgs
@@ -110,16 +111,17 @@ ReflectiveFeign(ParseHandlersByName targetToHandlersByName,
 // 构造器
 @Override
 public <T> T newInstance(Target<T> target) {
-    // targetToHandlersByName是构造器传入的ParseHandlersByName对象
-    // 根据target对象创建方法名和方法处理器的map映射
+    // 1.解析方法元数据
+    // targetToHandlersByName 是构造器传入的 ParseHandlersByName 对象
+    // 根据 target 对象创建方法名和方法处理器的 map 映射
     Map<String, MethodHandler> nameToHandler = targetToHandlersByName.apply(target); <1>
-    // 方法处理器的map映射
+    // 方法处理器的 map 映射
     Map<Method, MethodHandler> methodToHandler = new LinkedHashMap<Method, MethodHandler>();
-    // 默认方法处理器的map映射
+    // 默认方法处理器的 map 映射
     List<DefaultMethodHandler> defaultMethodHandlers = new LinkedList<DefaultMethodHandler>();
 
     // target.type() is @FeignClient 标识的class
-    // 遍历接口所有方法，构建Method -> MethodHandler的映射
+    // 遍历接口所有方法，构建 Method  ->  MethodHandler 的映射
     for (Method method : target.type().getMethods()) {
         if (method.getDeclaringClass() == Object.class) {
             continue;
@@ -133,39 +135,49 @@ public <T> T newInstance(Target<T> target) {
             methodToHandler.put(method, nameToHandler.get(Feign.configKey(target.type(), method)));
         }
     }
-    // 设置调用处理器
+    // 2.设置调用处理器
     // 创建动态代理，factory 是 InvocationHandlerFactory.Default，创建出来的是
     // feign.ReflectiveFeign.FeignInvocationHandler.dispatch 持有 methodToHandler 引用
     // ReflectiveFeign.FeignInvocationHandler，也就是说后续对方法的调用都会进入到该对象的 invoke 方法
-    InvocationHandler handler = factory.create(target, methodToHandler);
-    // 生成 JDK 动态代理
-    T proxy = (T) Proxy.newProxyInstance(target.type().getClassLoader(),
+    InvocationHandler handler = factory.create(target, methodToHandler); <2>
+
+    // 3.生成 JDK 动态代理
+    T proxy = (T) Proxy.newProxyInstance(target.type().getClassLoader(), <3>
             new Class<?>[]{target.type()}, handler);
 
     // 绑定默认方法到代理上
     for (DefaultMethodHandler defaultMethodHandler : defaultMethodHandlers) {
         defaultMethodHandler.bindTo(proxy);
     }
-    // 最终注入到 Spring 容器
     return proxy;
 }
 ----
 
-<1> 根据指定的 `contract` 解析 `target`
+<1> xref:feign/feign-core.adoc#_method-handler[根据指定的 contract 解析 target，根据 MethodMetadata 生成 MethodHandler 。]
 +
 [%collapsible]
-.Map<String, MethodHandler>
+.方法元数据
 ====
 image::name-to-hander.png[]
 ====
+<2> xref:feign/feign-core.adoc#_invocation-handler[设置调用处理器，最终执行 HTTP 请求的地方。]
 +
 [%collapsible]
-.InvocationHandler
+.调用处理器
 ====
 image::invocatio-handler.png[]
 ====
+<3> 生成 `JDK` 动态代理。
++
+[%collapsible]
+.动态代理
+====
+image::proxy-1.png[]
+image::proxy-2.png[]
+====
 
-=== 解析方法元数据
+[#_method-handler]
+== 解析方法元数据
 
 `Spring-cloud` 继承 `Contract.BaseContract`，实现处理参数的方法
 
@@ -175,11 +187,13 @@ image::invocatio-handler.png[]
 image::base-contract.png[]
 ====
 
+.feign.ReflectiveFeign.ParseHandlersByName#apply
 [source,java,indent=0]
 ----
 public Map<String, MethodHandler> apply(Target key) {
     // 待处理的方法元数据
-    List<MethodMetadata> metadata = contract.parseAndValidatateMetadata(key.type());
+    List<MethodMetadata> metadata = contract.parseAndValidatateMetadata(key.type()); <1>
+    // 保存生成的方法处理器
     Map<String, MethodHandler> result = new LinkedHashMap<String, MethodHandler>();
     // 处理方法元数据
     for (MethodMetadata md : metadata) {
@@ -196,14 +210,20 @@ public Map<String, MethodHandler> apply(Target key) {
         else {
             buildTemplate = new BuildTemplateByResolvingArgs(md, queryMapEncoder);
         }
+        // 创建方法处理器
         result.put(md.configKey(),
-                factory.create(key, md, buildTemplate, options, decoder, errorDecoder));
+                factory.create(key, md, buildTemplate, options, decoder, errorDecoder)); <2>
     }
     return result;
 }
 ----
 
-循环解析每个非默认方法元数据。
+<1> 获取方法元数据
+<2> 为每个方法创建自己的方法处理器
+
+=== 获取方法元数据
+
+解析每个非默认方法获取方法元数据。
 
 .feign.Contract.BaseContract#parseAndValidatateMetadata
 [source,java,indent=0]
@@ -275,7 +295,39 @@ protected MethodMetadata parseAndValidateMetadata(Class<?> targetType, Method me
 }
 ----
 
-== 发起请求
+=== 创建方法处理器
+
+.feign.SynchronousMethodHandler.Factory#create
+[source,java,indent=0]
+----
+public MethodHandler create(Target<?> target,
+                            MethodMetadata md,
+                            RequestTemplate.Factory buildTemplateFromArgs,
+                            Options options,
+                            Decoder decoder,
+                            ErrorDecoder errorDecoder) {
+    return new SynchronousMethodHandler(target, client, retryer, requestInterceptors, logger,
+            logLevel, md, buildTemplateFromArgs, options, decoder,
+            errorDecoder, decode404, closeAfterDecode, propagationPolicy);
+}
+----
+
+[#_invocation-handler]
+== 设置调用处理器
+
+通过工厂方法生成调用处理器。
+
+.feign.InvocationHandlerFactory.Default
+[source,java,indent=0]
+----
+static final class Default implements InvocationHandlerFactory {
+
+    @Override
+    public InvocationHandler create(Target target, Map<Method, MethodHandler> dispatch) {
+        return new ReflectiveFeign.FeignInvocationHandler(target, dispatch);
+    }
+}
+----
 
 === 不同方法的路由
 
@@ -306,10 +358,11 @@ public Object invoke(Object proxy, Method method, Object[] args) throws Throwabl
 }
 ----
 
-==== `DefaultMethodHandler`
+=== `DefaultMethodHandler`
 
 执行代理接口自己的方法。
 
+.feign.DefaultMethodHandler#invoke
 [source,java,indent=0]
 ----
 @Override
@@ -322,10 +375,11 @@ public Object invoke(Object[] argv) throws Throwable {
 }
 ----
 
-==== `SynchronousMethodHandler`
+=== `SynchronousMethodHandler`
 
 定义了发起 HTTP 请求的方法
 
+.feign.SynchronousMethodHandler#invoke
 [source,java,indent=0]
 ----
 @Override
@@ -363,8 +417,9 @@ public Object invoke(Object[] argv) throws Throwable {
 }
 ----
 
-=== 发起请求和解析响应
+==== 发起请求和解析响应
 
+.feign.SynchronousMethodHandler#executeAndDecode
 [source,java,indent=0]
 ----
 Object executeAndDecode(RequestTemplate template, Options options) throws Throwable {
@@ -448,9 +503,9 @@ Object executeAndDecode(RequestTemplate template, Options options) throws Throwa
 }
 ----
 
-=== 发送HTTP请求
+== 发送HTTP请求
 
-`client` 是一个 `Client` 接口，默认实现类是 `Client.Default`， 使用 `java.net.HttpURLConnection` 发送 `HTTP` 请求。
+`feign.Client` 是一个接口，默认实现类是 `feign.Client.Default`， 使用 `java.net.HttpURLConnection` 发送 `HTTP` 请求。
 
 feign还实现了：
 
@@ -459,6 +514,9 @@ feign还实现了：
 * RibbonClient
 * Java 11 Http2
 
+=== 默认请求方式。
+
+.feign.Client.Default#execute
 [source,java,indent=0]
 ----
 @Override
@@ -473,6 +531,7 @@ public Response execute(Request request, Options options) throws IOException {
 
 ==== 发送请求
 
+.feign.Client.Default#convertAndSend
 [source,java,indent=0]
 ----
 HttpURLConnection convertAndSend(Request request, Options options) throws IOException {
@@ -493,6 +552,7 @@ HttpURLConnection convertAndSend(Request request, Options options) throws IOExce
 
 ==== 解析响应
 
+.feign.Client.Default#convertResponse
 [source,java,indent=0]
 ----
 Response convertResponse(HttpURLConnection connection, Request request) throws IOException {
@@ -531,3 +591,13 @@ Response convertResponse(HttpURLConnection connection, Request request) throws I
             .build();
 }
 ----
+
+=== `Apache HttpClient`
+
+// todo
+To Be Continued.
+
+=== `OkHttp`
+
+// todo
+To Be Continued.

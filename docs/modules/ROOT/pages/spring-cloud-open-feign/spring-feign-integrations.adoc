@@ -3,16 +3,17 @@
 基本流程：
 
 * 使用 `FeignClientsRegistrar` 扫包并
-** 注入 `FeignClient` 配置信息(实际是注入 `FeignClientFactoryBean`)
-** 注入 `FeignClient` (实际是注入 `FeignClientFactoryBean`)
-* 使用 `FeignClientFactoryBean` 和 `FeignClientFactoryBean` 为每个 `@FeignClient` 标记的类创建子容器，每个容器相互隔离，都拥有完整的 `FeignClient` 配置信息
+** 注入 `FeignClient` 配置信息（实际是注入 `FeignClientSpecification`）。
+** 注入 `FeignClient` 客户端（实际是注入 `FeignClientFactoryBean`）。
+* 使用 `FeignClientSpecification` 和 `FeignClientFactoryBean` 为每个 `@FeignClient` 标记的类创建子容器，每个容器相互隔离，都拥有完整的 `FeignClient` 配置信息。
 
 核心类：
 
-[cols="a,a"]
+[cols="a,a,a"]
 |===
-| FeignClientFactoryBean | FeignContext
+| FeignClientSpecification | FeignClientFactoryBean | FeignContext
 
+|image::feign-client-specification.png[]
 |image::feign-client-factory-bean.png[]
 |image::feign-context.png[]
 |===
@@ -30,7 +31,7 @@ include::attachment$spring-cloud-open-feign.puml[]
 .`org.springframework.cloud.openfeign.EnableFeignClients`
 [source,java,indent=0]
 ----
-@Retention(RetentionPolicy.RUNTIME)
+@Retention()
 @Target(ElementType.TYPE)
 @Documented
 @Import(FeignClientsRegistrar.class) <1>
@@ -159,13 +160,13 @@ public void registerFeignClients(AnnotationMetadata metadata, BeanDefinitionRegi
 }
 ----
 
-<1> .AnnotationMetadata
+<1> 接口元数据（拿了个名字）
 +
 [%collapsible]
 ====
 image::annotation-matedata.png[]
 ====
-<2> FeignClient AnnotationAttributes
+<2> `@FeignClient` 注解的属性值
 +
 [%collapsible]
 ====
@@ -220,7 +221,9 @@ private void registerFeignClient(BeanDefinitionRegistry registry, AnnotationMeta
 
 == FeignClientFactoryBean
 
-注册 `FeignClientFactoryBean` 时，会把 `getObject()` 方法返回的对象注入到 Spring 容器中
+`FeignClientFactoryBean` 实现了 `FactoryBean<Object>` 接口。
+
+在注册 `FeignClientFactoryBean` 时，会把 `getObject()` 方法返回的对象注入到 Spring 容器中
 
 .org.springframework.cloud.openfeign.FeignClientFactoryBean#getObject
 [source,java,indent=0]
@@ -266,7 +269,7 @@ public Object getObject() throws Exception {
     // 格式化 url
     String url = this.url + cleanPath();
     // 获取 http client
-    Client client = getOptional(context, Client.class); <4> <5>
+    Client client = getOptional(context, Client.class); <4>
     if (client != null) {
         if (client instanceof LoadBalancerFeignClient) {
             // not load balancing because we have a url,
@@ -291,6 +294,7 @@ public Object getObject() throws Exception {
 <1> 注入 `FeignContext`，入口在 `FeignAutoConfiguration`
 <2> 如果配置了 Hystrix，执行此方法
 +
+.org.springframework.cloud.openfeign.FeignClientFactoryBean#loadBalance
 [source,java,indent=0]
 ----
 protected <T> T loadBalance(Feign.Builder builder,
@@ -313,9 +317,10 @@ protected <T> T loadBalance(Feign.Builder builder,
 <3> 默认执行的方法
 <4> `get()` 和 `getOptional()` 都是从 Feign 容器中去获取需要的类。其中通过 `get()` 方法获取的类不能为空。
 +
+.org.springframework.cloud.openfeign.FeignClientFactoryBean#get
 [source,java,indent=0]
 ----
-protected <T> T get(FeignContext context, Class<T> type) { <4>
+protected <T> T get(FeignContext context, Class<T> type) {
     // contextId 是容器名称，type 是要获取的类
     T instance = context.getInstance(this.contextId, type);
     if (instance == null) {
@@ -325,12 +330,15 @@ protected <T> T get(FeignContext context, Class<T> type) { <4>
     }
     return instance;
 }
-
-protected <T> T getOptional(FeignContext context,Class<T> type) { <4>
+----
++
+.org.springframework.cloud.openfeign.FeignClientFactoryBean#getOptional
+[source,java,indent=0]
+----
+protected <T> T getOptional(FeignContext context,Class<T> type) {
     return context.getInstance(this.contextId, type);
 }
 ----
-<5> `Feign` 默认的 `http client` 是 `java.net.HttpURLConnection`。
 --
 
 === `Targeter.target()`
@@ -356,31 +364,64 @@ class DefaultTargeter implements Targeter {
 ----
 class HystrixTargeter implements Targeter {
 
-    @Override
-    public <T> T target(FeignClientFactoryBean factory, Feign.Builder feign,
-            FeignContext context, Target.HardCodedTarget<T> target) {
-        if (!(feign instanceof feign.hystrix.HystrixFeign.Builder)) {
-            return feign.target(target);
-        }
-        feign.hystrix.HystrixFeign.Builder builder = (feign.hystrix.HystrixFeign.Builder) feign;
-        String name = StringUtils.isEmpty(factory.getContextId()) ? factory.getName()
-                : factory.getContextId();
-        SetterFactory setterFactory = getOptional(name, context, SetterFactory.class);
-        if (setterFactory != null) {
-            builder.setterFactory(setterFactory);
-        }
-        Class<?> fallback = factory.getFallback();
-        if (fallback != void.class) {
-            return targetWithFallback(name, context, target, builder, fallback);
-        }
-        Class<?> fallbackFactory = factory.getFallbackFactory();
-        if (fallbackFactory != void.class) {
-            return targetWithFallbackFactory(name, context, target, builder,
-                    fallbackFactory);
-        }
-        // 最终执行 Feign.Builder 的 target方法
-        return feign.target(target);
-    }
+	@Override
+	public <T> T target(FeignClientFactoryBean factory, Feign.Builder feign, FeignContext context, Target.HardCodedTarget<T> target) {
+		// 校验
+		if (!(feign instanceof feign.hystrix.HystrixFeign.Builder)) {
+			return feign.target(target);
+		}
+
+		feign.hystrix.HystrixFeign.Builder builder = (feign.hystrix.HystrixFeign.Builder) feign;
+		String name = StringUtils.isEmpty(factory.getContextId()) ? factory.getName()
+			: factory.getContextId();
+		SetterFactory setterFactory = getOptional(name, context, SetterFactory.class);
+		if (setterFactory != null) {
+			builder.setterFactory(setterFactory);
+		}
+		// fallback 熔断
+		Class<?> fallback = factory.getFallback();
+		if (fallback != void.class) {
+			return targetWithFallback(name, context, target, builder, fallback);
+		}
+		// fallbackFactory 熔断
+		Class<?> fallbackFactory = factory.getFallbackFactory();
+		if (fallbackFactory != void.class) {
+			return targetWithFallbackFactory(name, context, target, builder,
+				fallbackFactory);
+		}
+
+		return feign.target(target);
+	}
+
+	private <T> T targetWithFallbackFactory(String feignClientName, FeignContext context,
+											Target.HardCodedTarget<T> target, HystrixFeign.Builder builder,
+											Class<?> fallbackFactoryClass) {
+		FallbackFactory<? extends T> fallbackFactory = (FallbackFactory<? extends T>) getFromContext(
+			"fallbackFactory", feignClientName, context, fallbackFactoryClass,
+			FallbackFactory.class);
+		return builder.target(target, fallbackFactory);
+	}
+
+	private <T> T targetWithFallback(String feignClientName, FeignContext context,
+									 Target.HardCodedTarget<T> target, HystrixFeign.Builder builder,
+									 Class<?> fallback) {
+		T fallbackInstance = getFromContext("fallback", feignClientName, context,
+			fallback, target.type());
+		return builder.target(target, fallbackInstance);
+	}
+}
+----
+
+.feign.hystrix.HystrixFeign.Builder
+[source,java,indent=0]
+----
+public <T> T target(Target<T> target, T fallback) {
+  return build(fallback != null ? new FallbackFactory.Default<T>(fallback) : null).newInstance(target);
+}
+
+public <T> T target(Target<T> target, FallbackFactory<? extends T> fallbackFactory) {
+  return build(fallbackFactory).newInstance(target);
+}
 ----
 
 == FeignContext
@@ -448,65 +489,60 @@ public <T> T getInstance(String name, Class<T> type) {
 }
 ----
 
-== 配置信息
+=== 调用
 
-=== `FeignClientProperties`
+`FeignClientFactoryBean` 中创建 `Feign.Builder` 和给 `Feign.Builder` 设置属性时调用，根据名字从中 `ApplicationContext` 获取 `FeignContext` 子容器。
 
+.org.springframework.cloud.openfeign.FeignClientFactoryBean
 [source,java,indent=0]
 ----
-@ConfigurationProperties("feign.client")
-public class FeignClientProperties {
+protected Feign.Builder feign(FeignContext context) {
+    FeignLoggerFactory loggerFactory = get(context, FeignLoggerFactory.class);
+    Logger logger = loggerFactory.create(this.type);
 
-	private boolean defaultToProperties = true;
+    // build()设置默认值
+    Feign.Builder builder = get(context, Feign.Builder.class)
+            // required values
+            .logger(logger)
+            .encoder(get(context, Encoder.class))
+            .decoder(get(context, Decoder.class))
+            .contract(get(context, Contract.class));
 
-	private String defaultConfig = "default";
+    configureFeign(context, builder);
 
-	private Map<String, FeignClientConfiguration> config = new HashMap<>();
-
-    //...
+    return builder;
 }
-----
 
-image::feign-client-properties.png[]
-
-=== `FeignHttpClientProperties`
-
-[source,java,indent=0]
-----
-@ConfigurationProperties(prefix = "feign.httpclient")
-public class FeignHttpClientProperties {
-
-	/**
-	 * Default value for disabling SSL validation.
-	 */
-	public static final boolean DEFAULT_DISABLE_SSL_VALIDATION = false;
-
-	/**
-	 * 默认 httpclient 最大连接数
-	 */
-	public static final int DEFAULT_MAX_CONNECTIONS = 200;
-
-	/**
-	 * 默认每个 FeignClient 最大连接数
-	 */
-	public static final int DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 50;
-
-	/**
-	 * 默认存活时间
-	 */
-	public static final long DEFAULT_TIME_TO_LIVE = 900L;
-
-	/**
-	 * 默认超时时间
-	 */
-	public static final int DEFAULT_CONNECTION_TIMEOUT = 2000;
-
-	/**
-	 * 默认时间单位 s
-	 */
-	public static final TimeUnit DEFAULT_TIME_TO_LIVE_UNIT = TimeUnit.SECONDS;
-    //...
+protected void configureUsingConfiguration(FeignContext context,
+                                           Feign.Builder builder) {
+    Logger.Level level = getOptional(context, Logger.Level.class);
+    if (level != null) {
+        builder.logLevel(level);
+    }
+    Retryer retryer = getOptional(context, Retryer.class);
+    if (retryer != null) {
+        builder.retryer(retryer);
+    }
+    ErrorDecoder errorDecoder = getOptional(context, ErrorDecoder.class);
+    if (errorDecoder != null) {
+        builder.errorDecoder(errorDecoder);
+    }
+    Request.Options options = getOptional(context, Request.Options.class);
+    if (options != null) {
+        builder.options(options);
+    }
+    Map<String, RequestInterceptor> requestInterceptors = context
+        .getInstances(this.contextId, RequestInterceptor.class);
+    if (requestInterceptors != null) {
+        builder.requestInterceptors(requestInterceptors.values());
+    }
+    QueryMapEncoder queryMapEncoder = getOptional(context, QueryMapEncoder.class);
+    if (queryMapEncoder != null) {
+        builder.queryMapEncoder(queryMapEncoder);
+    }
+    if (this.decode404) {
+        builder.decode404();
+    }
 }
-----
 
-image::feign-http-client-properties.png[]
+----

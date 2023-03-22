@@ -49,7 +49,7 @@ protected void logRequest(String configKey, Level logLevel, Request request) {
 
 网络数据经过压缩后实际上降低了网络传输的字节数，最明显的好处就是可以加快网页加载的速度。网页加载速度加快的好处不言而喻，除了节省流量，改善用户的浏览体验外，另一个潜在的好处是 `Gzip` 与搜索引擎的抓取工具有着更好的关系。
 
-=== HTTP协议中关于压缩传输的规定
+=== `HTTP` 协议中关于压缩传输的规定
 
 客户端向服务器请求中带有：`Accept-Encoding:gzip，deflate` 字段，向服务器表示客户端支持的压缩格式（`gzip` 或者 `deflate`），如果不发送该消息头，服务端默认是不会压缩的。
 
@@ -117,6 +117,18 @@ feign:
 
 == 添加缓存
 
+可以使用 `@EnableCaching` 为 `Feign` 开启缓存。
+
+[source,java,indent=0]
+----
+public interface DemoClient {
+
+    @GetMapping("/demo/{filterParam}")
+    @Cacheable(cacheNames = "demo-cache", key = "#keyParam")
+    String demoEndpoint(String keyParam, @PathVariable String filterParam);
+}
+----
+
 == 自定义异常处理
 
 [source,java,indent=0]
@@ -161,7 +173,7 @@ public class ClientConfiguration {
 </dependency>
 ----
 
-=== 上传文件 (`multipart/form-data`)
+=== https://www.itmuch.com/spring-cloud-sum/feign-form-params/[上传文件 (`multipart/form-data`)^]
 
 [source,java,indent=0]
 ----
@@ -177,7 +189,7 @@ public class ClientConfiguration {
 }
 ----
 
-=== Form表单提交 (`application/x-www-form-urlencoded`)
+=== https://www.itmuch.com/spring-cloud-sum/spring-cloud-feign-upload/[Form表单提交 (`application/x-www-form-urlencoded`)^]
 
 [source,java,indent=0]
 ----

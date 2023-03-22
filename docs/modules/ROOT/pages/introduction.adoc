@@ -2,13 +2,13 @@
 
 https://github.com/OpenFeign/feign[Feign^]是一个用于Spring Boot应用程序的声明式REST客户端。
 
-官方原话是**Feign makes writing java http clients easier**。
+官方原话是 **Feign makes writing java http clients easier**。
 
 IMPORTANT: Feign 基于每个请求是同步的。因此，Feign 会阻塞，直到它收到响应。
 
 == Netflix Feign 和 Open Feign
 
-最初，Feign 是由 Netflix 创建并发布的，作为其 Netflix OSS 项目的一部分。后来 Netflix 决定在内部停止使用 Feign，并停止开发。由于这一决定，Netflix 在一个名为 https://github.com/OpenFeign/feign[OpenFeign^] 的新项目下将 Feign 完全转移到了开源社区。Feign 项目被贡献给了开源组织，于是才有了我们今天使用的 OpenFeign 组件。
+最初，Feign 是由 Netflix 创建并发布的，作为其 Netflix OSS 项目的一部分。后来 Netflix 决定在内部停止使用 Feign，并停止开发。由于这一决定，Netflix 在一个名为 https://github.com/OpenFeign[OpenFeign^] 的新项目下将 Feign 完全转移到了开源社区。Feign 项目被贡献给了开源组织，于是才有了我们今天使用的 OpenFeign 组件。
 
 Spring Cloud Netflix 将 Netflix OSS 产品整合到了 Spring Cloud 生态系统中，包括 *Feign*、*Eureka*、*Ribbon* 和许多其他工具和实用程序。
 

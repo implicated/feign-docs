@@ -6,7 +6,7 @@ Feign.Builder -> Feign.Builder : <b>build</b>
 Feign.Builder -> ReflectiveFeign --++: <b>newInstance</b>
 ReflectiveFeign -> ReflectiveFeign.ParseHandlersByName ++: <b>apply</b> (根据target对象创建方法名和方法处理器的map映射)
 return
-ReflectiveFeign -> FeignInvocationHandler ++: <b>create</b> (设置调用处理器)
+ReflectiveFeign -> ReflectiveFeign.FeignInvocationHandler ++: <b>create</b> (设置调用处理器)
 return
 ReflectiveFeign -> Proxy ++: <b>newProxyInstance</b> 生成 JDK 动态代理
 return

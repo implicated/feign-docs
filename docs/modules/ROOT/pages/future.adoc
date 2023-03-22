@@ -27,3 +27,15 @@ public class MyApp {
 ----
 
 == https://github.com/spring-projects/spring-framework/blob/main/spring-webflux/src/main/java/org/springframework/web/reactive/function/client/WebClient.java[Spring WebClient^]
+
+`WebClient` 是一个异步非阻塞网络请求客户端，在 `Spring 5` 中引入，属于 `spring-web-reactive` 的一部分。
+
+image::spring-mvc-vs-spring-web-reactive.png[]
+
+____
+https://docs.spring.io/spring-framework/docs/5.0.0.M1/spring-framework-reference/html/web-reactive.html[Spring Web Reactive Framework^]
+
+https://juejin.cn/post/6844903889586618376[如何使用OpenFeign+WebClient实现非阻塞的接口聚合 - 掘金^]
+
+https://www.baeldung.com/spring-boot-feignclient-vs-webclient[Spring Boot FeignClient vs. WebClient | Baeldung^]
+____

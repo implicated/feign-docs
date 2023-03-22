@@ -1,33 +1,5 @@
 = Spring Cloud Open Feign 配置项
 
-== FeignClientsConfiguration（默认值）
-
-[cols="1,2a"]
-|===
-| 组件 | 默认值
-
-| Contract
-| SpringMvcContract
-
-| Encoder
-| SpringEncoder
-
-| Decoder
-| SpringDecoder
-
-| ErrorDecoder
-| feign.codec.ErrorDecoder.Default
-
-| Logger
-| Slf4jLogger
-
-| Retryer
-| Retryer.NEVER_RETRY
-
-| RequestInterceptor
-| 无
-|===
-
 == `@EnableFeignClients`
 
 [col="1,2a"]
@@ -37,15 +9,20 @@
 |value
 |同basePackages
 |basePackages
-|包扫描路径（字符串数组）
+|类扫描路径（字符串数组）
 |basePackageClasses
-|扫描指定的每个类所在的包下面的所有被@FeignClient修饰的类
-[#_defaultConfiguration]
+|扫描指定的每个类所在的包下面的所有被 `@FeignClient` 修饰的类
 |defaultConfiguration
 |`FeignClient` 的全局配置
 |clients
-| 用 `@FeignClient` 注释的类的列表。与 `basePackages` 互斥
+| 用 `@FeignClient` 注释的类的列表。
 |===
+
+[NOTE]
+====
+* `clients` 与类路径扫描互斥。
+* 同时指定 `clients` 和类路径扫描，则 `clients` 优先。
+====
 
 == `@FeignClient`
 
@@ -94,11 +71,43 @@ public interface FooClient {
 * 同时指定 `Java Bean` 和配置属性，则配置属性优先。
 ====
 
+== FeignClientsConfiguration
+
+全局默认值。
+
+[cols="1,2a"]
+|===
+| 组件 | 默认值
+
+| Contract
+| SpringMvcContract
+
+| Encoder
+| SpringEncoder
+
+| Decoder
+| SpringDecoder
+
+| ErrorDecoder
+| feign.codec.ErrorDecoder.Default
+
+| Logger
+| Slf4jLogger
+
+| Retryer
+| Retryer.NEVER_RETRY
+
+| RequestInterceptor
+| 无
+|===
+
 == FeignClient Properties
+
+`Feign` 客户端配置。
 
 [cols="6,1,2"]
 |===
-|配置 | 默认值（ #foo# 是Feign默认） | 描述
+|配置 | 默认值（ #Feign默认# ） | 描述
 
 | feign.client.default-config | default | 全局配置key
 | feign.client.default-to-properties | true | 配置优先
@@ -116,7 +125,7 @@ public interface FooClient {
 
 == FeignHttpClient Properties
 
-使用 https://hc.apache.org/httpcomponents-client-5.2.x/index.html[Apache HttpClient^] 发送 `HTTP` 请求。
+连接池配置。
 
 [cols="3,1,2"]
 |===
@@ -133,7 +142,30 @@ public interface FooClient {
 |feign.httpclient.time-to-live-unit | 秒 | 线程存活时间单位
 |===
 
+[%collapsible]
+====
+image::feign-client-properties.png[]
+
+[source,java,indent=0]
+----
+@ConfigurationProperties("feign.client")
+public class FeignClientProperties {
+
+	private boolean defaultToProperties = true;
+
+	private String defaultConfig = "default";
+
+	private Map<String, FeignClientConfiguration> config = new HashMap<>();
+
+    //...
+}
+----
+
+====
+
 == Feign Compression Properties
+
+`HTTP` 压缩配置。
 
 [cols="3,1,2"]
 |===
@@ -145,3 +177,46 @@ public interface FooClient {
 |feign.compression.response.enabled | false | 开启响应压缩
 |feign.compression.response.useGzipDecoder | false | 启用默认的gzip解码器
 |===
+
+[%collapsible]
+====
+image::feign-http-client-properties.png[]
+
+[source,java,indent=0]
+----
+@ConfigurationProperties(prefix = "feign.httpclient")
+public class FeignHttpClientProperties {
+
+	/**
+	 * Default value for disabling SSL validation.
+	 */
+	public static final boolean DEFAULT_DISABLE_SSL_VALIDATION = false;
+
+	/**
+	 * 默认 httpclient 最大连接数
+	 */
+	public static final int DEFAULT_MAX_CONNECTIONS = 200;
+
+	/**
+	 * 默认每个 FeignClient 最大连接数
+	 */
+	public static final int DEFAULT_MAX_CONNECTIONS_PER_ROUTE = 50;
+
+	/**
+	 * 默认存活时间
+	 */
+	public static final long DEFAULT_TIME_TO_LIVE = 900L;
+
+	/**
+	 * 默认超时时间
+	 */
+	public static final int DEFAULT_CONNECTION_TIMEOUT = 2000;
+
+	/**
+	 * 默认时间单位 s
+	 */
+	public static final TimeUnit DEFAULT_TIME_TO_LIVE_UNIT = TimeUnit.SECONDS;
+    //...
+}
+----
+====
