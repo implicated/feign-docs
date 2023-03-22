@@ -335,6 +335,7 @@
     <span class="hljs-keyword">else</span> {
         <span class="hljs-keyword">final</span> Set&lt;String&gt; clientClasses = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashSet</span>&lt;&gt;();
         basePackages = <span class="hljs-keyword">new</span> <span class="hljs-title class_">HashSet</span>&lt;&gt;();
+        <span class="hljs-comment">// 扫描 clients</span>
         <span class="hljs-keyword">for</span> (Class&lt;?&gt; clazz : clients) {
             basePackages.add(ClassUtils.getPackageName(clazz));
             clientClasses.add(clazz.getCanonicalName());
@@ -347,6 +348,7 @@
                 <span class="hljs-keyword">return</span> clientClasses.contains(cleaned);
             }
         };
+        <span class="hljs-comment">// 同时满足</span>
         scanner.addIncludeFilter(
                 <span class="hljs-keyword">new</span> <span class="hljs-title class_">AllTypeFilter</span>(Arrays.asList(filter, annotationTypeFilter)));
     }
@@ -356,6 +358,7 @@
         Set&lt;BeanDefinition&gt; candidateComponents = scanner
                 .findCandidateComponents(basePackage);
         <span class="hljs-keyword">for</span> (BeanDefinition candidateComponent : candidateComponents) {
+            <span class="hljs-comment">// 判断是否是带有注解的 Bean</span>
             <span class="hljs-keyword">if</span> (candidateComponent <span class="hljs-keyword">instanceof</span> AnnotatedBeanDefinition) {
                 <span class="hljs-comment">// 验证带注释的类必须是接口，不是接口则直接抛出异常</span>
                 <span class="hljs-comment">// verify annotated class is an interface</span>
