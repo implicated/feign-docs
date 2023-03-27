@@ -1,0 +1,17 @@
+= Learn Feign
+:doctype: book
+:toc:
+:toc-title:
+
+include::introduction.adoc[]
+
+include::feign/feign-component.adoc[]
+include::feign/feign-core.adoc[]
+
+include::spring-cloud-open-feign/spring-feign-integrations.adoc[]
+include::spring-cloud-open-feign/spring-mvc-support.adoc[]
+include::spring-cloud-open-feign/spring-feign-configuration.adoc[]
+
+include::optimize.adoc[]
+include::future.adoc[]
+include::ref.adoc[]
