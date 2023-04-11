@@ -10,7 +10,7 @@ content:
       branches: HEAD
 ui:
   bundle:
-    url: https://raw.githubusercontent.com/implicated/asciidoc-publish-template/ui/ui-bundle.zip?raw=true
+    url: https://raw.githubusercontent.com/implicated/docs-template/ui/ui-bundle.zip?raw=true
     snapshot: true
 runtime:
   fetch: true
